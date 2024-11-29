@@ -1,16 +1,16 @@
-# `hut-finder-utilities`
+# `hut-finder-utilities-gohut-finder-utilities/README.md`
 
 Contains all the required data to get things running, on the database side.
 
 As of now, it just initialises hut data.
 
-## How to run
+## How to compile and run
 ```
-cargo clean; cargo build; cargo run -- <flag>
+go build
 ```
-`<flag>` can be one of:
-- `hut`, to initialise hut data,
-- and maybe more later on...
+```
+./hut-finder-utilities-go initialiseHuts
+```
 
 If you are looking for how to set up the database, refer to this [README](dbinit/README.md).
 

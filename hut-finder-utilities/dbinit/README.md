@@ -43,12 +43,8 @@ psql -U hutfinder hut-finder
 Then we can run the scripts in `init.sql` in order.
 
 ## `pg_hba.conf` Issues
-When running the program with the `hut` flag, you may have issues such as:
-```
-Error loading data, stacktrace: Error { kind: Db, cause: Some(DbError { severity: "FATAL", parsed_severity: Some(Fatal), code: SqlState(E28000), message: "Ident authentication failed for user \"hutfinder\"", detail: None, hint: None, position: None, where_: None, schema: None, table: None, column: None, datatype: None, constraint: None, file: Some("auth.c"), line: Some(323), routine: Some("auth_failed") }) }
-```
-
-You'll have to change some configurations in your `hba.conf` file. To locate where this file is:
+When running the program, you may have issues connecting. If so,
+you'll have to change some configurations in your `hba.conf` file. To locate where this file is:
 1) ### Log into the `postgres` user
     ```
     sudo su - postgres

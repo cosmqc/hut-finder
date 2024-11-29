@@ -1,5 +1,5 @@
 /*
-Copyright © 2024 Yunu Cho yunu121@gmail.com
+Copyright © 2024 Yunu Cho yunu121@gmail.com, Jake Dalton cqsmico7@gmail.com
 */
 package cmd
 
@@ -30,34 +30,36 @@ type Hut struct {
 	Bookable   string `csv:"Bookable"`
 }
 
-func handleErr(e error) {
-	if e != nil {
-		panic(e)
-	}
-}
-
-func initialiseDatabaseConnection(reader *bufio.Reader) *pgx.Conn {
+func initialiseDatabaseConnection(reader *bufio.Reader) (*pgx.Conn, error) {
 	fmt.Println("Database Connection")
 	fmt.Print("    Please enter the name of your database, or leave blank for the default (hut-finder): ")
 	dbName, err := reader.ReadString('\n')
-	handleErr(err)
+	if err != nil {
+		return nil, fmt.Errorf("could not read db name: %w", err)
+	}
 	if strings.TrimSpace(dbName) == "" {
 		dbName = "hut-finder"
 	}
 	fmt.Print("    Please enter the hostname, or leave blank for the default (localhost): ")
 	hostname, err := reader.ReadString('\n')
-	handleErr(err)
+	if err != nil {
+		return nil, fmt.Errorf("could not read hostname: %w", err)
+	}
 	if strings.TrimSpace(hostname) == "" {
 		hostname = "localhost"
 	}
 
 	fmt.Print("    Please enter your username (for the database user): ")
 	username, err := reader.ReadString('\n')
-	handleErr(err)
+	if err != nil {
+		return nil, fmt.Errorf("could not read username: %w", err)
+	}
 
 	fmt.Print("    Please enter your password: ")
 	bytes, err := term.ReadPassword(int(syscall.Stdin))
-	handleErr(err)
+	if err != nil {
+		return nil, fmt.Errorf("could not read password: %w", err)
+	}
 	fmt.Println()
 	var url string = fmt.Sprintf("postgres://%s/%s?user=%s&password=%s",
 		strings.TrimSpace(hostname),
@@ -65,26 +67,40 @@ func initialiseDatabaseConnection(reader *bufio.Reader) *pgx.Conn {
 		strings.TrimSpace(username),
 		string(bytes))
 	conn, err := pgx.Connect(context.Background(), url)
-	handleErr(err)
-	return conn
+	if err != nil {
+		return nil, fmt.Errorf("could not connect to psql: %w", err)
+	}
+	return conn, nil
 }
 
-func initialiseHutData() {
+func initialiseHutData() error {
 	reader := bufio.NewReader(os.Stdin)
-	conn := initialiseDatabaseConnection(reader)
+
+	conn, err := initialiseDatabaseConnection(reader)
+	if err != nil {
+		return fmt.Errorf("could not initialise db conn: %w", err)
+	}
 	defer conn.Close(context.Background())
+
 	fmt.Println("Load huts into database")
 	fmt.Print("Please provide the full path of the csv file: ")
 	path, err := reader.ReadString('\n')
-	fmt.Println(path)
-	handleErr(err)
+	if err != nil {
+		return fmt.Errorf("could not read full filepath: %w", err)
+	}
+
 	file, err := os.OpenFile(strings.TrimSpace(path), os.O_RDONLY, os.ModePerm)
-	handleErr(err)
+	if err != nil {
+		return fmt.Errorf("could not read full filepath: %w", err)
+	}
 	defer file.Close()
 
 	huts := []*Hut{}
 
-	handleErr(gocsv.UnmarshalFile(file, &huts))
+	if err = gocsv.UnmarshalFile(file, &huts); err != nil {
+		return fmt.Errorf("failed to unmarshal file: %w", err)
+	}
+
 	query :=
 		`INSERT INTO hut 
 		(global_id, name, location, region, image_url, hut_url, facilities, x, y, bookable) 
@@ -124,6 +140,7 @@ func initialiseHutData() {
 	fmt.Printf("\nTotal successful inserts: %d\n", successfulInserts)
 	fmt.Printf("Total failed inserts: %d\n", failedInserts)
 	defer results.Close()
+	return nil
 }
 
 // initialiseHutsCmd represents the initialiseHuts command
@@ -134,7 +151,9 @@ var initialiseHutsCmd = &cobra.Command{
 
 Data is passed in as a csv file, and is inserted into a PostgreSQL database.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		initialiseHutData()
+		if err := initialiseHutData(); err != nil {
+			panic(fmt.Errorf("could not initialise hut data: %w", err))
+		}
 	},
 }
 

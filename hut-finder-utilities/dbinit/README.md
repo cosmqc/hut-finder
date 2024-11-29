@@ -44,7 +44,7 @@ Then we can run the scripts in `init.sql` in order.
 
 ## `pg_hba.conf` Issues
 When running the program, you may have issues connecting. If so,
-you'll have to change some configurations in your `hba.conf` file. To locate where this file is:
+you'll have to change some configurations in your `pg_hba.conf` file. To locate where this file is:
 1) ### Log into the `postgres` user
     ```
     sudo su - postgres

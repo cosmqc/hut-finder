@@ -13,7 +13,7 @@ go mod tidy
 go build
 ```
 ```
-./hut-finder-utilities-go initialiseHuts
+./hut-finder-utilities initialiseHuts
 ```
 Or run
 ```

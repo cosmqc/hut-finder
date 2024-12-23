@@ -10,27 +10,28 @@ import (
 	"hut-finder-api/pkg/db"
 	"hut-finder-api/pkg/model"
 	"log"
-
-	"github.com/jackc/pgx/v5"
 )
 
 func GetUserById(id uint64) (*model.User, error) {
 	log.Printf("querying for hut with id: `%d`", id)
-	sql := "SELECT * FROM hut_user WHERE id = $1"
-	rows, err := db.GetDatabase().Query(context.Background(),
-		sql, id)
+	sql := `
+	SELECT id, username, first_name, last_name, email 
+	FROM hut_user 
+	WHERE id = $1`
+	var result model.User
+	err := db.GetDatabase().QueryRow(context.Background(),
+		sql, id).Scan(
+		&result.Id,
+		&result.Username,
+		&result.FirstName,
+		&result.LastName,
+		&result.Email)
 	if err != nil {
 		log.Printf("could not query database: %v", err)
 		return nil, fmt.Errorf("could not query database: %w", err)
 	}
-	defer rows.Close()
-	user, err := pgx.CollectOneRow(rows, pgx.RowToStructByName[model.User])
-	if err != nil {
-		log.Printf("could not collect row: %v", err)
-		return nil, fmt.Errorf("could not collect row: %w", err)
-	}
 
-	return &user, nil
+	return &result, nil
 }
 
 func CreateUser(user model.User) (*model.User, error) {

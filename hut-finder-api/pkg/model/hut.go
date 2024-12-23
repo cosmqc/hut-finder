@@ -16,8 +16,8 @@ type Hut struct {
 	HutUrl           string   `json:"hutUrl" db:"hut_url"`
 	FacilitiesString string   `json:"-" db:"facilities"`
 	Facilities       []string `json:"facilities" db:"-"`
-	X                string   `json:"x" db:"x"`
-	Y                string   `json:"y" db:"y"`
+	Lat              float64  `json:"lat" db:"lat"`
+	Lon              float64  `json:"lon" db:"lon"`
 	Bookable         bool     `json:"bookable" db:"bookable"`
 }
 

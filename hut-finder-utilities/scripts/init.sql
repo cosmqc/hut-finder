@@ -7,7 +7,7 @@ CREATE TABLE hut (
     image_url TEXT,
     hut_url TEXT,
     facilities TEXT,
-    x BIGINT NOT NULL,
-    y BIGINT NOT NULL,
+    lat DOUBLE PRECISION NOT NULL,
+    lon DOUBLE PRECISION NOT NULL,
     bookable BOOLEAN NOT NULL
 );

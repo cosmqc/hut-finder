@@ -12,4 +12,5 @@ func RegisterRoutes(r *gin.Engine) {
 	r.POST("/ping", Ping)
 	r.GET("/huts/:id", GetHutById)
 	r.GET("/huts/global/:globalId", GetHutByGlobalId)
+	r.GET("users/:id", GetUserById)
 }

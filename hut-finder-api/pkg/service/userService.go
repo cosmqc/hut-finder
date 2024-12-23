@@ -26,3 +26,20 @@ func GetUserById(id string) (*model.User, error) {
 	}
 	return user, nil
 }
+
+func CreateUser(user model.User) (*model.User, error) {
+	if err := user.Validate(); err != nil {
+		log.Printf("failed to validate user: %v", err)
+		return nil, err
+	}
+	if err := user.HashPassword(); err != nil {
+		log.Printf("could not hash password: %v", err)
+		return nil, err
+	}
+	result, err := repository.CreateUser(user)
+	if err != nil {
+		log.Printf("repository threw error: %v", err)
+		return nil, err
+	}
+	return result, nil
+}

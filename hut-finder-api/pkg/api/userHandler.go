@@ -5,6 +5,8 @@ Copyright © 2024 Yunu Cho yunu121@gmail.com, Jake Dalton cqsmico7@gmail.com
 package api
 
 import (
+	"errors"
+	"hut-finder-api/pkg/model"
 	"hut-finder-api/pkg/service"
 	"log"
 	"net/http"
@@ -19,10 +21,27 @@ func GetUserById(c *gin.Context) {
 		c.JSON(http.StatusNotFound, nil)
 		return
 	}
-	userDeref := *user
-	c.JSON(http.StatusOK, userDeref)
+	c.JSON(http.StatusOK, *user)
 }
 
 func CreateUser(c *gin.Context) {
+	var request model.User
+	if err := c.ShouldBindJSON(&request); err != nil {
+		log.Printf("failed to create user: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
+	user, err := service.CreateUser(request)
+	if err != nil {
+		log.Printf("failed to create user: %v", err)
+		var tgt *model.ValidationError
+		if errors.As(err, &tgt) {
+			c.JSON(http.StatusBadRequest, gin.H{"error": tgt.Message})
+		} else {
+			c.JSON(http.StatusInternalServerError, nil)
+		}
+		return
+	}
+	c.JSON(http.StatusCreated, *user)
 }

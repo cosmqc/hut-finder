@@ -7,6 +7,7 @@ package api
 import (
 	"errors"
 	"hut-finder-api/pkg/model"
+
 	"hut-finder-api/pkg/service"
 	"log"
 	"net/http"

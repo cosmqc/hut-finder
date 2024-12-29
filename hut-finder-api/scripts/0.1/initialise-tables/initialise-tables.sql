@@ -34,4 +34,11 @@ CREATE TABLE hut_visit (
     FOREIGN KEY (hut_id) REFERENCES hut (id) ON DELETE CASCADE
 );
 
+CREATE TABLE session (
+    user_id INT NOT NULL,
+    token_string VARCHAR NOT NULL,
+    PRIMARY KEY (user_id, token_string),
+    FOREIGN KEY (user_id) REFERENCES hut_user (id) ON DELETE CASCADE
+);
+
 COMMIT;

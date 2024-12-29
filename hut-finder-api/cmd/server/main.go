@@ -11,8 +11,6 @@ import (
 	"hut-finder-api/pkg/db"
 	"log"
 	"os"
-
-	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -31,9 +29,7 @@ func main() {
 		log.Fatalf("Could not initialise database connection: %v", err)
 	}
 
-	r := gin.Default()
-
-	api.RegisterRoutes(r)
+	r := api.CreateServer()
 
 	log.Printf("Server is running on port %s...", port)
 	if err := r.Run(":" + port); err != nil {

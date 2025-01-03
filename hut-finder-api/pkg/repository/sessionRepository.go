@@ -30,10 +30,13 @@ func GetSession(token string) (*model.Session, error) {
 	return &result, nil
 }
 
-func CreateSession(userId uint32, token string) (string, error) {
+func UpsertSession(userId uint32, token string) (string, error) {
 	sql := `
 	INSERT INTO session (user_id, token_string) 
-	VALUES ($1, $2) RETURNING token_string
+	VALUES ($1, $2) 
+	ON CONFLICT (user_id) DO UPDATE 
+	SET token_string = $2 
+	RETURNING token_string
 	`
 	var result string
 	err := db.GetDatabase().QueryRow(context.Background(),
@@ -45,4 +48,14 @@ func CreateSession(userId uint32, token string) (string, error) {
 		return "", err
 	}
 	return result, nil
+}
+
+func DeleteSessionByUserId(userId uint32) error {
+	sql := `DELETE FROM session WHERE user_id = $1`
+	err := db.GetDatabase().QueryRow(context.Background(), sql, userId)
+	if err != nil {
+		log.Printf("could not query database: %v", err)
+		return fmt.Errorf("could not query database: %v", err)
+	}
+	return nil
 }

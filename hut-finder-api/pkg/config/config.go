@@ -13,6 +13,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// Loads config from environment variables.
 func LoadConfig() error {
 	if err := godotenv.Load(); err != nil {
 		return fmt.Errorf("could not load configurations: %w", err)
@@ -29,10 +30,12 @@ func GetPort() string {
 	return port
 }
 
+// Returns DB_URL. If this value is blank, the server will panic at startup.
 func GetDbUrl() string {
 	return os.Getenv("DB_URL")
 }
 
+// Returns SIGNING_KEY. Used to sign JWTs.
 func GetSigningKey() string {
 	return os.Getenv("SIGNING_KEY")
 }

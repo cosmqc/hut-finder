@@ -12,6 +12,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Middleware authentication filter for incoming requests.
+// JWTs are parsed and validated, and rejected if it cannot be parsed or fails validation.
 func JwtMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token := c.Request.Header.Get("Authorization")

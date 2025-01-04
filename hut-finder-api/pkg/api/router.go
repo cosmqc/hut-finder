@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Creates and returns the server with additional configurations.
 func CreateServer() *gin.Engine {
 	r := gin.New()
 	r.Use(gin.Logger())
@@ -19,22 +20,24 @@ func CreateServer() *gin.Engine {
 	return r
 }
 
+// Registers routes that don't require authentication.
 func registerUnauthorisedRoutes(r *gin.Engine) {
 	public := r.Group("/public")
 	{
 		public.POST("/ping", Ping)
 		public.GET("/huts/:id", GetHutById)
 		public.GET("/huts/global/:globalId", GetHutByGlobalId)
-		public.GET("/users/:id", GetUserById)
 		public.POST("/users/create", CreateUser)
 		public.POST("/login", Login)
 	}
 }
 
+// Registers routes that require authentication.
 func registerAuthorisedRoutes(r *gin.Engine) {
 	protected := r.Group("/protected")
 	protected.Use(middleware.JwtMiddleware())
 	{
+		protected.GET("/users/:id", GetUserById)
 		protected.POST("/logout", Logout)
 	}
 }

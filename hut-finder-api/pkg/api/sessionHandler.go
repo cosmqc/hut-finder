@@ -14,6 +14,7 @@ import (
 	"github.com/gin-gonic/gin/render"
 )
 
+// Handler function for the `/public/login` endpoint.
 func Login(c *gin.Context) {
 	var request model.SessionRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
@@ -29,6 +30,7 @@ func Login(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"session": session})
 }
 
+// Handler function for the `/protected/logout` endpoint.
 func Logout(c *gin.Context) {
 	token := c.Request.Header.Get("Authorization")
 	if err := service.DeleteSession(token); err != nil {

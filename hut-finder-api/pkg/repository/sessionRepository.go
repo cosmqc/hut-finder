@@ -14,6 +14,7 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
+// Gets a session struct by a token.
 func GetSession(token string) (*model.Session, error) {
 	sql := `SELECT * FROM session WHERE token_string = $1`
 	rows, err := db.GetDatabase().Query(context.Background(), sql, token)
@@ -30,6 +31,7 @@ func GetSession(token string) (*model.Session, error) {
 	return &result, nil
 }
 
+// Creates a new session, with the user's id and generated token.
 func CreateSession(userId uint32, token string) (string, error) {
 	sql := `
 	INSERT INTO session (user_id, token_string) 
@@ -48,6 +50,7 @@ func CreateSession(userId uint32, token string) (string, error) {
 	return result, nil
 }
 
+// Deletes session.
 func DeleteSessionByUserIdAndToken(userId uint32, token string) error {
 	sql := `DELETE FROM session WHERE user_id = $1 AND token_string = $2`
 	result, err := db.GetDatabase().Exec(context.Background(), sql, userId, token)

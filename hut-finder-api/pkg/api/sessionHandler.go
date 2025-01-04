@@ -11,9 +11,10 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/render"
 )
 
-func CreateSession(c *gin.Context) {
+func Login(c *gin.Context) {
 	var request model.SessionRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
 		log.Printf("failed to create session: %v", err)
@@ -30,13 +31,11 @@ func CreateSession(c *gin.Context) {
 
 func Logout(c *gin.Context) {
 	token := c.Request.Header.Get("Authorization")
-	if token == "" {
-		log.Printf("No token exists")
-		c.Abort()
-		return
-	}
 	if err := service.DeleteSession(token); err != nil {
 		log.Printf("service threw error: %v", err)
+		c.JSON(http.StatusInternalServerError, nil)
 		return
 	}
+	c.Render(http.StatusOK, render.Data{})
+
 }

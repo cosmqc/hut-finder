@@ -6,7 +6,7 @@ package db
 
 import (
 	"context"
-	"os"
+	"hut-finder-api/pkg/config"
 	"sync"
 
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -22,7 +22,7 @@ var (
 )
 
 func NewPostgresConnection(ctx context.Context) (*postgres, error) {
-	connStr := os.Getenv("DB_URL")
+	connStr := config.GetDbUrl()
 	var db *pgxpool.Pool
 	var err error
 	pgOnce.Do(func() {

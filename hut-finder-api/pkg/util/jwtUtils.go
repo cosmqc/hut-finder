@@ -2,9 +2,10 @@ package util
 
 import (
 	"fmt"
+	"hut-finder-api/pkg/config"
 	"hut-finder-api/pkg/model"
 	"hut-finder-api/pkg/repository"
-	"os"
+
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
@@ -23,7 +24,7 @@ func GetUserFromTokenString(tokenString string) (*model.User, error) {
 		}
 		userRef = user
 
-		hmacSampleSecret := []byte(os.Getenv("KEY"))
+		hmacSampleSecret := []byte(config.GetSigningKey())
 		return hmacSampleSecret, nil
 	})
 	return userRef, err
@@ -42,7 +43,7 @@ func Parse(session *model.Session) (*jwt.Token, error) {
 		if user.Id != session.UserId {
 			return nil, fmt.Errorf("user id does not match session user id")
 		}
-		hmacSampleSecret := []byte(os.Getenv("KEY"))
+		hmacSampleSecret := []byte(config.GetSigningKey())
 		return hmacSampleSecret, nil
 	})
 }
@@ -52,7 +53,7 @@ func CreateToken(username string) (string, error) {
 		jwt.MapClaims{
 			"iss": "hut-finder",
 			"sub": username,
-			"exp": time.Now().Add(time.Hour * 12).Unix(),
+			"exp": time.Now().Add(time.Hour * time.Duration(config.GetTokenExpiryHours())).Unix(),
 		})
-	return token.SignedString([]byte(os.Getenv("KEY")))
+	return token.SignedString([]byte(config.GetSigningKey()))
 }

@@ -16,6 +16,7 @@ func GetSession(tokenString string) error {
 		log.Printf("repository threw error: %v", err)
 		return fmt.Errorf("repository threw error: %v", err)
 	}
+
 	_, err = util.Parse(session)
 	if err != nil {
 		log.Printf("could not parse session: %v", err)
@@ -35,7 +36,7 @@ func CreateSession(username string, password string) (string, error) {
 		log.Printf("could not sign session: %v", err)
 		return "", fmt.Errorf("could not authorise user: %v", err)
 	}
-	result, err := repository.UpsertSession(user.Id, tokenString)
+	result, err := repository.CreateSession(user.Id, tokenString)
 	if err != nil {
 		log.Printf("could not create session: %v", err)
 		return "", fmt.Errorf("could not create session: %v", err)
@@ -49,7 +50,7 @@ func DeleteSession(tokenString string) error {
 		log.Printf("could not get user from token: %v", err)
 		return fmt.Errorf("could not get user from token: %v", err)
 	}
-	err = repository.DeleteSessionByUserId(user.Id)
+	err = repository.DeleteSessionByUserIdAndToken(user.Id, tokenString)
 	if err != nil {
 		return fmt.Errorf("could not delete session: %v", err)
 	}

@@ -27,7 +27,7 @@ func registerUnauthorisedRoutes(r *gin.Engine) {
 		public.GET("/huts/global/:globalId", GetHutByGlobalId)
 		public.GET("/users/:id", GetUserById)
 		public.POST("/users/create", CreateUser)
-		public.POST("/login", CreateSession)
+		public.POST("/login", Login)
 	}
 }
 
@@ -35,6 +35,6 @@ func registerAuthorisedRoutes(r *gin.Engine) {
 	protected := r.Group("/protected")
 	protected.Use(middleware.JwtMiddleware())
 	{
-		protected.POST("/logout")
+		protected.POST("/logout", Logout)
 	}
 }

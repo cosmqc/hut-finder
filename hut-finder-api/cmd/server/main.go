@@ -10,7 +10,6 @@ import (
 	"hut-finder-api/pkg/config"
 	"hut-finder-api/pkg/db"
 	"log"
-	"os"
 )
 
 func main() {
@@ -19,10 +18,7 @@ func main() {
 		log.Fatalf("Could not load config: %v", err)
 	}
 
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-	}
+	port := config.GetPort()
 
 	_, err = db.NewPostgresConnection(context.Background())
 	if err != nil {

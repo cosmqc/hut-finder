@@ -1,3 +1,7 @@
+/*
+Copyright © 2024 Yunu Cho yunu121@gmail.com, Jake Dalton cqsmico7@gmail.com
+*/
+
 package service
 
 import (
@@ -9,6 +13,7 @@ import (
 	"strings"
 )
 
+// Gets hut by id.
 func GetHutById(id string) (*model.Hut, error) {
 	i, err := strconv.ParseUint(id, 10, 32)
 	if err != nil {
@@ -24,6 +29,7 @@ func GetHutById(id string) (*model.Hut, error) {
 	return hut, nil
 }
 
+// Gets hut by global id.
 func GetHutByGlobalId(globalId string) (*model.Hut, error) {
 	hut, err := repository.GetHutByGlobalId(strings.TrimSpace(globalId))
 	if err != nil {

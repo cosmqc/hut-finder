@@ -6,7 +6,7 @@ package db
 
 import (
 	"context"
-	"os"
+	"hut-finder-api/pkg/config"
 	"sync"
 
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -21,8 +21,9 @@ var (
 	pgOnce     sync.Once
 )
 
+// Creates a new postgres connection pool.
 func NewPostgresConnection(ctx context.Context) (*postgres, error) {
-	connStr := os.Getenv("DB_URL")
+	connStr := config.GetDbUrl()
 	var db *pgxpool.Pool
 	var err error
 	pgOnce.Do(func() {
@@ -35,10 +36,13 @@ func NewPostgresConnection(ctx context.Context) (*postgres, error) {
 	return pgInstance, nil
 }
 
+// Closes the DB connection.
 func (pg *postgres) Close() {
 	pg.db.Close()
 }
 
+// Returns singleton database instance. Whenever repository calls are needed, import this module
+// and invoke this function!
 func GetDatabase() *pgxpool.Pool {
 	return pgInstance.db
 }

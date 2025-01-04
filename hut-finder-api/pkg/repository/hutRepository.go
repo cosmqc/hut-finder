@@ -14,6 +14,7 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
+// Gets hut by id.
 func GetHutById(id uint64) (*model.Hut, error) {
 	log.Printf("querying for hut with id: `%d`", id)
 	rows, err := db.GetDatabase().Query(context.Background(),
@@ -33,6 +34,7 @@ func GetHutById(id uint64) (*model.Hut, error) {
 	return &hut, nil
 }
 
+// Gets hut by global id.
 func GetHutByGlobalId(globalId string) (*model.Hut, error) {
 	log.Printf("querying for hut with global id: `%s`", globalId)
 	rows, err := db.GetDatabase().Query(context.Background(),

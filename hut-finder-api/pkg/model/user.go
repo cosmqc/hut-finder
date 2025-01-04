@@ -19,6 +19,7 @@ type User struct {
 	Password  string `json:"password,omitempty" db:"password" binding:"required"`
 }
 
+// Validation methods
 func (u *User) Validate() error {
 	if !validateEmail(u.Email) {
 		return &ValidationError{Message: "invalid email format"}
@@ -29,6 +30,12 @@ func (u *User) Validate() error {
 	return nil
 }
 
+// Validation for password. The conditions for this are:
+// - > 8 characters,
+// - At least one:
+//   - Capital letter,
+//   - Number,
+//   - Special character.
 func notWeakPassword(password string) bool {
 	if len(password) < 8 {
 		return false
@@ -37,6 +44,7 @@ func notWeakPassword(password string) bool {
 	return !match
 }
 
+// Validation for email. See RFCs 5321 and 5322.
 func validateEmail(email string) bool {
 	if len(email) == 0 {
 		return false
@@ -45,6 +53,7 @@ func validateEmail(email string) bool {
 	return match
 }
 
+// Hashes password.
 func (u *User) HashPassword() error {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
 	if err != nil {

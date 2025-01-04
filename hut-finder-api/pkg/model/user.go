@@ -44,7 +44,7 @@ func notWeakPassword(password string) bool {
 	return !match
 }
 
-// Validation for password. See RFCs 5321 and 5322.
+// Validation for email. See RFCs 5321 and 5322.
 func validateEmail(email string) bool {
 	if len(email) == 0 {
 		return false

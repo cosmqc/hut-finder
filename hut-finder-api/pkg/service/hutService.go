@@ -38,3 +38,13 @@ func GetHutByGlobalId(globalId string) (*model.Hut, error) {
 	}
 	return hut, nil
 }
+
+// Gets all huts.
+func GetAllHuts() ([]model.Hut, error) {
+	huts, err := repository.GetAllHuts()
+	if err != nil {
+		log.Printf("repository threw error: %v", err)
+		return nil, fmt.Errorf("repository threw error: %w", err)
+	}
+	return huts, nil
+}

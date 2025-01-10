@@ -1,0 +1,27 @@
+services:
+  utilities:
+    environment:
+      POSTGRES_USER: "hut-finder"
+      POSTGRES_PASSWORD: "password"
+      POSTGRES_DB: "hutfinder"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hut-finder -d hutfinder"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    build:
+      context: hut-finder-utilities
+    ports:
+      - 5432:5432
+
+  api:
+    environment:
+      DB_URL: "postgresql://hut-finder:password@host.docker.internal:5432/hutfinder"
+    build:
+      context: hut-finder-api
+      target: builder
+    depends_on:
+      utilities:
+        condition: service_healthy
+    ports:
+      - 8080:8080

@@ -20,7 +20,7 @@ Or run
 go run main.go initialiseHuts
 ```
 
-If you are looking for how to set up the database, refer to this [README](dbinit/README.md).
+If you are looking for how to set up the database, refer to this [README](scripts/README.md).
 
 ## Authors
 - Yunu Cho

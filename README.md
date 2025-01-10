@@ -13,6 +13,27 @@ Instructions for each component are in the individual READMEs, Quickstart for AP
 docker compose up --build
 ```
 
+Setting up environment:
+```python
+# .env
+
+# The port the API listens on, defaults to 8080 if unset.
+API_PORT=1337
+# The username of the user postgres creates
+POSTGRES_USER="example"
+# The password of the user postgres creates
+POSTGRES_PASSWORD="example"
+# The postgres database name. Cannot include hyphens (postgres commits oof)
+POSTGRES_DB="example"
+```
+
+```python
+# hut-finder-api/.env - must be created but can be empty
+
+# The port the API listens on, serves as a backup if the root .env isn't set
+PORT=1337
+```
+
 ## Authors 
 - Yunu Cho
 - Jake Dalton

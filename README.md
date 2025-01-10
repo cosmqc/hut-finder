@@ -17,21 +17,23 @@ Setting up environment:
 ```python
 # .env
 
-# The port the API listens on, defaults to 8080 if unset.
-API_PORT=1337
 # The username of the user postgres creates
-POSTGRES_USER="example"
+POSTGRES_USER=example
 # The password of the user postgres creates
-POSTGRES_PASSWORD="example"
+POSTGRES_PASSWORD=example
 # The postgres database name. Cannot include hyphens (postgres commits oof)
-POSTGRES_DB="example"
+POSTGRES_DB=example
 ```
 
 ```python
-# hut-finder-api/.env - must be created but can be empty
+# hut-finder-api/.env - `PORT` and `TOKEN_EXPIRY_HOURS` can be left empty
 
 # The port the API listens on, serves as a backup if the root .env isn't set
 PORT=1337
+# The key used to sign the session token
+SIGNING_KEY=example
+# The time until session token expires, defaults to 12 if missing
+TOKEN_EXPIRY_HOURS=12
 ```
 
 ## Authors 

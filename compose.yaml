@@ -17,7 +17,9 @@ services:
   api:
     environment:
       DB_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@host.docker.internal:5432/${POSTGRES_DB}"
-      PORT: ${API_PORT}
+      PORT: ${PORT}
+      SIGNING_KEY: ${SIGNING_KEY}
+      TOKEN_EXPIRY_HOURS: ${TOKEN_EXPIRY_HOURS}
     build:
       context: hut-finder-api
       target: runtime
@@ -25,4 +27,4 @@ services:
       utilities:
         condition: service_healthy
     ports:
-      - ${API_PORT}:${API_PORT}
+      - ${PORT}:${PORT}

@@ -103,11 +103,12 @@ func initialiseHutData() error {
 
 	query :=
 		`INSERT INTO hut 
-		(global_id, name, location, region, image_url, hut_url, facilities, x, y, bookable) 
+		(global_id, name, location, region, image_url, hut_url, facilities, lat, lon, bookable) 
 	VALUES 
-		(@GlobalId, @Name, @Location, @Region, @ImageUrl, @HutUrl, @Facilities, @X, @Y, @Bookable)`
+		(@GlobalId, @Name, @Location, @Region, @ImageUrl, @HutUrl, @Facilities, @Lat, @Lon, @Bookable)`
 	batch := &pgx.Batch{}
 	for _, hut := range huts {
+		lat, lon := NZTMStringtoLatLon(hut.X, hut.Y)
 		args := pgx.NamedArgs{
 			"GlobalId":   hut.GlobalId,
 			"Name":       hut.Name,
@@ -116,8 +117,8 @@ func initialiseHutData() error {
 			"ImageUrl":   hut.ImageUrl,
 			"HutUrl":     hut.HutUrl,
 			"Facilities": hut.Facilities,
-			"X":          hut.X,
-			"Y":          hut.Y,
+			"Lat":        lat,
+			"Lon":        lon,
 			"Bookable":   hut.Bookable,
 		}
 		batch.Queue(query, args)

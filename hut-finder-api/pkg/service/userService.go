@@ -10,31 +10,38 @@ import (
 	"hut-finder-api/pkg/repository"
 	"log"
 	"strconv"
-	"strings"
 )
 
-// Gets hut by id.
-func GetHutById(id string) (*model.Hut, error) {
+// Gets user by id.
+func GetUserById(id string) (*model.User, error) {
 	i, err := strconv.ParseUint(id, 10, 32)
 	if err != nil {
 		log.Printf("could not parse string param to int: %v", err)
 		return nil, fmt.Errorf("could not parse string param to int: %w", err)
 	}
 
-	hut, err := repository.GetHutById(i)
+	user, err := repository.GetUserById(i)
 	if err != nil {
 		log.Printf("repository threw error: %v", err)
 		return nil, fmt.Errorf("repository threw error: %w", err)
 	}
-	return hut, nil
+	return user, nil
 }
 
-// Gets hut by global id.
-func GetHutByGlobalId(globalId string) (*model.Hut, error) {
-	hut, err := repository.GetHutByGlobalId(strings.TrimSpace(globalId))
+// Creates a new user.
+func CreateUser(user model.User) (*model.User, error) {
+	if err := user.Validate(); err != nil {
+		log.Printf("failed to validate user: %v", err)
+		return nil, err
+	}
+	if err := user.HashPassword(); err != nil {
+		log.Printf("could not hash password: %v", err)
+		return nil, err
+	}
+	result, err := repository.CreateUser(user)
 	if err != nil {
 		log.Printf("repository threw error: %v", err)
-		return nil, fmt.Errorf("repository threw error: %w", err)
+		return nil, err
 	}
-	return hut, nil
+	return result, nil
 }

@@ -12,6 +12,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Handler function for the `/public/huts/:id` endpoint.
+// Gets a hut by id and returns it in the response body if found.
 func GetHutById(c *gin.Context) {
 	hut, err := service.GetHutById(c.Param("id"))
 	if err != nil {
@@ -23,6 +25,8 @@ func GetHutById(c *gin.Context) {
 	c.JSON(http.StatusOK, hutDeref)
 }
 
+// Handler function for the `/public/huts/global/:globalId` endpoint.
+// Gets a hut by global id and returns it in the response body if found.
 func GetHutByGlobalId(c *gin.Context) {
 	hut, err := service.GetHutByGlobalId(c.Param("globalId"))
 	if err != nil {

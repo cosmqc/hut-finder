@@ -16,11 +16,15 @@ type Hut struct {
 	HutUrl           string   `json:"hutUrl" db:"hut_url"`
 	FacilitiesString string   `json:"-" db:"facilities"`
 	Facilities       []string `json:"facilities" db:"-"`
-	X                string   `json:"x" db:"x"`
-	Y                string   `json:"y" db:"y"`
+	Lat              float64  `json:"lat" db:"lat"`
+	Lon              float64  `json:"lon" db:"lon"`
 	Bookable         bool     `json:"bookable" db:"bookable"`
 }
 
+// `FacilitiesString` is stored as a comma separated string.
+// We convert it into a json-friendly list.
+// Note that `FacilitiesString` is omitted from the Hut struct
+// upon JSON serialisation for that reason.
 func PopulateFacilities(hut *Hut) {
 	hut.Facilities = strings.Split(hut.FacilitiesString, ", ")
 }

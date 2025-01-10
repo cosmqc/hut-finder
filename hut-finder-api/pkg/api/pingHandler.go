@@ -11,6 +11,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Handler function for the `/public/ping` endpoint.
+// Really only used for test purposes.
 func Ping(c *gin.Context) {
 	var ping model.Ping
 	if err := c.BindJSON(&ping); err != nil {

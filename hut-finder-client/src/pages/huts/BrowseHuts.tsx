@@ -15,6 +15,7 @@ const BrowseHuts = () => {
         setError('Failed to fetch huts. Please try again later.');
       }
     }
+    document.title = 'Browse Huts';
     fetchHuts();
   }, []);
 

@@ -1,4 +1,4 @@
-import {AspectRatio, Card, CardProps, Typography} from '@mui/joy';
+import {AspectRatio, Card, CardContent, CardOverflow, CardProps, Link, Typography} from '@mui/joy';
 import ImageIcon from '@mui/icons-material/Image';
 import React from 'react';
 
@@ -12,22 +12,31 @@ const HutImage = (hut: Hut): React.ReactNode => {
     <img
       src={hut.imageUrl}
       alt={hut.name}
+      loading="lazy"
     />
   );
-}
+};
 
-const HutCard = ({hut, ...props}: {hut : Hut} & CardProps) => {
+const HutCard = ({hut, ...props}: { hut: Hut } & CardProps) => {
   return (
     <Card {...props}>
-      <div>
-        <Typography level='title-lg'>{hut.name}</Typography>
-        <Typography level='body-sm'>{hut.location}</Typography>
-      </div>
-      <AspectRatio minHeight='120px' maxHeight='200px'>
-        {HutImage(hut)}
-      </AspectRatio>
+      <CardOverflow>
+        <AspectRatio ratio="2">
+          {HutImage(hut)}
+        </AspectRatio>
+      </CardOverflow>
+      <CardContent>
+        <Link
+          overlay
+          underline='none'
+          href={`/huts/${hut.id}`}
+        >
+          <Typography level="title-md">{hut.name}</Typography>
+        </Link>
+        <Typography level="body-sm" sx={{textAlign: 'left'}}>{hut.location}</Typography>
+      </CardContent>
     </Card>
-  )
-}
+  );
+};
 
 export default HutCard;

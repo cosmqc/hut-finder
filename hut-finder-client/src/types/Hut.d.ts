@@ -10,3 +10,4 @@ type Hut = Readonly<{
   lon: number,
   bookable: boolean,
 }>
+

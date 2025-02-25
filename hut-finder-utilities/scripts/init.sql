@@ -1,3 +1,7 @@
+SET ROLE 'hutfinder';
+
+BEGIN;
+
 CREATE TABLE hut (
     id SERIAL PRIMARY KEY,
     global_id VARCHAR(255) NOT NULL,
@@ -11,3 +15,30 @@ CREATE TABLE hut (
     lon DOUBLE PRECISION NOT NULL,
     bookable BOOLEAN NOT NULL
 );
+
+CREATE TABLE hut_user (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(32) NOT NULL,
+    first_name VARCHAR(32) NOT NULL,
+    last_name VARCHAR(32) NOT NULL,
+    email VARCHAR(254) NOT NULL,
+    password VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE hut_visit (
+    user_id INT NOT NULL,
+    hut_id INT NOT NULL,
+    visited TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, hut_id, visited),
+    FOREIGN KEY (user_id) REFERENCES hut_user (id) ON DELETE CASCADE,
+    FOREIGN KEY (hut_id) REFERENCES hut (id) ON DELETE CASCADE
+);
+
+CREATE TABLE session (
+    user_id INT NOT NULL,
+    token_string VARCHAR NOT NULL,
+    PRIMARY KEY (user_id, token_string),
+    FOREIGN KEY (user_id) REFERENCES hut_user (id) ON DELETE CASCADE
+);
+
+COMMIT;

@@ -52,3 +52,25 @@ func GetHutByGlobalId(globalId string) (*model.Hut, error) {
 	model.PopulateFacilities(&hut)
 	return &hut, nil
 }
+
+// Gets all huts.
+func GetAllHuts() ([]model.Hut, error) {
+	log.Printf("querying for all huts")
+	rows, err := db.GetDatabase().Query(context.Background(),
+		"SELECT * FROM hut")
+	if err != nil {
+		log.Printf("could not query database: %v", err)
+		return nil, err
+	}
+	huts, err := pgx.CollectRows(rows, pgx.RowToStructByName[model.Hut])
+	if err != nil {
+		log.Printf("could not collect rows: %v", err)
+		return nil, err
+	}
+	var result []model.Hut
+	for _, hut := range huts {
+		model.PopulateFacilities(&hut)
+		result = append(result, hut)
+	}
+	return result, nil
+}

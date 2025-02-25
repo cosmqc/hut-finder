@@ -37,3 +37,13 @@ func GetHutByGlobalId(c *gin.Context) {
 	hutDeref := *hut
 	c.JSON(http.StatusOK, hutDeref)
 }
+
+func GetAllHuts(c *gin.Context) {
+	huts, err := service.GetAllHuts()
+	if err != nil {
+		log.Printf("could not find huts: %v", err)
+		c.JSON(http.StatusInternalServerError, nil)
+		return
+	}
+	c.JSON(http.StatusOK, huts)
+}

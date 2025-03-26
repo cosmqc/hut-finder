@@ -38,7 +38,7 @@ const (
 )
 
 func (c HutCategory) String() string {
-	return [...]string{"Great Walks", "Individually Priced", "Club", "Serviced", "Standard", "Basic"}[c]
+	return [...]string{"Great Walks", "Individually Priced", "Club / Serviced Alpine", "Serviced", "Standard", "Basic"}[c]
 }
 
 // PopulateFacilities `FacilitiesString` is stored as a comma separated string.

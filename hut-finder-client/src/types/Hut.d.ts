@@ -9,5 +9,6 @@ type Hut = Readonly<{
   lat: number,
   lon: number,
   bookable: boolean,
+  category: number,
 }>
 

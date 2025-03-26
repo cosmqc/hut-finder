@@ -1,12 +1,6 @@
--- Adds hut categories
-
 SET ROLE = 'hut-finder';
-
 BEGIN;
 
-ALTER TABLE hut
-    ADD COLUMN category INTEGER;
--- INDIVIDUALLY_PRICED
 UPDATE hut
 SET category = 1
 WHERE name IN (
@@ -44,13 +38,4 @@ WHERE name IN (
                'Plateau Hut',
                'Tasman Saddle Hut'
     );
-
-UPDATE hut
-SET category = 5
-WHERE name IN (
-               'A Frame Hut',
-               'Abrahams Bay Hunters Hut'``,
-    );
-
-
 COMMIT;

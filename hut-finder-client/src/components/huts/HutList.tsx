@@ -11,7 +11,10 @@ const HutList = (props: HutListProps) => {
       container
       rowSpacing={2}
       columnSpacing={2}
-      sx={{width: '100%', justifyContent: 'center'}}
+      sx={{
+        width: '100%',
+        justifyContent: 'stretch',
+      }}
     >
       {props.huts.map((hut: Hut) => (
         <Grid
@@ -19,17 +22,19 @@ const HutList = (props: HutListProps) => {
           xs={12}
           sm={6}
           md={4}
-          display="flex"
-          justifyContent="center"
+          display='flex'
         >
           <HutCard
             hut={hut}
-            variant="outlined"
-            color="primary"
+            variant='outlined'
+            color='primary'
             sx={{
+              flexGrow: 1,
               width: '100%',
-              maxWidth: 320,
-              '&:hover': {boxShadow: 'md', borderColor: 'neutral.outlinedHoverBorder'},
+              '&:hover': {
+                boxShadow: 'md',
+                borderColor: 'neutral.outlinedHoverBorder'
+              },
             }}/>
         </Grid>
       ))}

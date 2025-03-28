@@ -2,15 +2,18 @@ import {useEffect, useState} from 'react';
 import HutList from '../../components/huts/HutList.tsx';
 import {getHuts} from '../../services/Huts.ts';
 import {Box, CircularProgress, Typography} from '@mui/joy';
+import SearchSidebar from '../../components/common/Sidebar.tsx';
 
 const BrowseHuts = () => {
   const [huts, setHuts] = useState<Hut[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [mounted, setMounted] = useState<boolean>(false);
+  const [search, setSearch] = useState<string>('');
+  const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   useEffect(() => {
     const fetchHuts = async () => {
       try {
-        const data: Hut[] = await getHuts();
+        const data: Hut[] = await getHuts(search, selectedCategories);
         setHuts(data);
         setMounted(true);
       } catch (err) {
@@ -21,7 +24,7 @@ const BrowseHuts = () => {
     }
     document.title = 'Browse Huts';
     fetchHuts();
-  }, []);
+  }, [search, selectedCategories]);
 
   useEffect(() => {
 
@@ -43,27 +46,42 @@ const BrowseHuts = () => {
   return (
     <Box
       sx={{
-        width: '100%',
-        paddingTop: '10px',
         display: 'flex',
-        paddingX: '10px',
-        flexGrow: 1,
-        alignItems: 'stretch',
-        justifyContent: 'center',
+        height: '100vh',
+        overflow: 'hidden',
       }}
     >
-      {!mounted ? (
-        <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-          <Box>
-            <CircularProgress variant='solid' size='lg'/>
-            <Typography>Loading Huts...</Typography>
+      <SearchSidebar
+        onSearch={setSearch}
+        onSelectedCategories={setSelectedCategories}
+      />
+      <Box
+        sx={{
+          flexGrow: 1,
+          overflowY: 'auto',
+          padding: 2,
+        }}
+      >
+        {!mounted ? (
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%',
+            }}
+          >
+            <Box>
+              <CircularProgress variant="solid" size="lg" />
+              <Typography>Loading Huts...</Typography>
+            </Box>
           </Box>
-        </Box>
-      ) : (
-        <HutList huts={huts} />
-      )}
+        ) : (
+          <HutList huts={huts} />
+        )}
+      </Box>
     </Box>
-  )
+  );
 
 }
 

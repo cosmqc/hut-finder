@@ -14,6 +14,7 @@ const HutList = (props: HutListProps) => {
       sx={{
         width: '100%',
         justifyContent: 'stretch',
+        paddingX: '10px',
       }}
     >
       {props.huts.map((hut: Hut) => (
@@ -22,6 +23,8 @@ const HutList = (props: HutListProps) => {
           xs={12}
           sm={6}
           md={4}
+          lg={3}
+          xl={3}
           display='flex'
         >
           <HutCard

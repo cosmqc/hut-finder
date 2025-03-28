@@ -1,8 +1,13 @@
 import axiosInstance from './Api.ts';
 
 
-export const getHuts = async (): Promise<Hut[]> => {
-  const response = await axiosInstance.get<Hut[]>('/public/huts');
+export const getHuts = async (query: string, categories: number[]): Promise<Hut[]> => {
+  const response = await axiosInstance.get<Hut[]>('/public/huts', {
+    params: {
+      query: query,
+      categories: categories,
+    }
+  });
   return response.data;
 }
 

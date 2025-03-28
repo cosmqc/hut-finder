@@ -1,3 +1,13 @@
+type HutSearchResponse = Readonly<{
+  categories: HutCategory[],
+  list: Hut[],
+}>
+
+type HutCategory = Readonly<{
+  id: number,
+  name: string,
+}>
+
 type Hut = Readonly<{
   id: number,
   globalId: string,

@@ -10,11 +10,12 @@ import (
 	"hut-finder-api/pkg/db"
 	"hut-finder-api/pkg/model"
 	"log"
+	"strings"
 
 	"github.com/jackc/pgx/v5"
 )
 
-// Gets hut by id.
+// GetHutById Gets hut by id.
 func GetHutById(id uint64) (*model.Hut, error) {
 	log.Printf("querying for hut with id: `%d`", id)
 	rows, err := db.GetDatabase().Query(context.Background(),
@@ -34,7 +35,7 @@ func GetHutById(id uint64) (*model.Hut, error) {
 	return &hut, nil
 }
 
-// Gets hut by global id.
+// GetHutByGlobalId Gets hut by global id.
 func GetHutByGlobalId(globalId string) (*model.Hut, error) {
 	log.Printf("querying for hut with global id: `%s`", globalId)
 	rows, err := db.GetDatabase().Query(context.Background(),
@@ -53,24 +54,53 @@ func GetHutByGlobalId(globalId string) (*model.Hut, error) {
 	return &hut, nil
 }
 
-// Gets all huts.
-func GetAllHuts() ([]model.Hut, error) {
+// GetAllHuts Gets all huts.
+func GetAllHuts(query string, categories []int, sortMethod string) ([]model.Hut, error) {
 	log.Printf("querying for all huts")
-	rows, err := db.GetDatabase().Query(context.Background(),
-		"SELECT * FROM hut")
+	var sql string
+	var args []interface{}
+
+	args = append(args, "%"+query+"%")
+
+	if len(categories) == 0 {
+		sql = "SELECT * FROM hut WHERE name ILIKE $1 "
+	} else {
+		sql = "SELECT * FROM hut WHERE name ILIKE $1 AND category IN ("
+		var placeholders []string
+
+		for i, category := range categories {
+			placeholders = append(placeholders, fmt.Sprintf("$%d", i+2))
+			args = append(args, category)
+		}
+
+		sql += strings.Join(placeholders, ", ") + ") "
+	}
+	switch sortMethod {
+	case "ALPHABETICAL_ASC":
+		sql += " ORDER BY name ASC"
+	case "ALPHABETICAL_DESC":
+		sql += " ORDER BY name DESC"
+	default:
+		sql += " ORDER BY name ASC"
+	}
+
+	rows, err := db.GetDatabase().Query(context.Background(), sql, args...)
 	if err != nil {
 		log.Printf("could not query database: %v", err)
 		return nil, err
 	}
+
 	huts, err := pgx.CollectRows(rows, pgx.RowToStructByName[model.Hut])
 	if err != nil {
 		log.Printf("could not collect rows: %v", err)
 		return nil, err
 	}
+
 	var result []model.Hut
 	for _, hut := range huts {
 		model.PopulateFacilities(&hut)
 		result = append(result, hut)
 	}
+
 	return result, nil
 }

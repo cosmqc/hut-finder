@@ -3,28 +3,34 @@ import HutList from '../../components/huts/HutList.tsx';
 import {getHuts} from '../../services/Huts.ts';
 import {Box, CircularProgress, Typography} from '@mui/joy';
 import SearchSidebar from '../../components/common/Sidebar.tsx';
+import {SortMethod} from '../../types/Constants.ts';
 
 const BrowseHuts = () => {
-  const [huts, setHuts] = useState<Hut[]>([]);
+  const [searchResult, setSearchResult] = useState<HutSearchResponse>({
+    categories: [],
+    results: [],
+  });
   const [error, setError] = useState<string | null>(null);
   const [mounted, setMounted] = useState<boolean>(false);
   const [search, setSearch] = useState<string>('');
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
-  useEffect(() => {
-    const fetchHuts = async () => {
-      try {
-        const data: Hut[] = await getHuts(search, selectedCategories);
-        setHuts(data);
-        setMounted(true);
-      } catch (err) {
-        console.error(err);
-        setMounted(true);
-        setError('Failed to fetch huts. Please try again later.');
-      }
+  const [sortMethod, setSortMethod] = useState<string>(SortMethod.ALPHABETICAL_ASC);
+  const fetchHuts = async () => {
+    try {
+      const data: HutSearchResponse = await getHuts(search, selectedCategories, sortMethod);
+      setSearchResult(data);
+      setMounted(true);
+    } catch (err) {
+      console.error(err);
+      setMounted(true);
+      setError('Failed to fetch huts. Please try again later.');
     }
+  }
+  useEffect(() => {
+
     document.title = 'Browse Huts';
     fetchHuts();
-  }, [search, selectedCategories]);
+  }, []);
 
   useEffect(() => {
 
@@ -54,6 +60,12 @@ const BrowseHuts = () => {
       <SearchSidebar
         onSearch={setSearch}
         onSelectedCategories={setSelectedCategories}
+        onSortMethod={setSortMethod}
+        selectedSortMethod={sortMethod}
+        categories={searchResult.categories}
+        selectedCategories={selectedCategories}
+        mounted={mounted}
+        search={fetchHuts}
       />
       <Box
         sx={{
@@ -77,7 +89,7 @@ const BrowseHuts = () => {
             </Box>
           </Box>
         ) : (
-          <HutList huts={huts} />
+          <HutList huts={searchResult.results} />
         )}
       </Box>
     </Box>

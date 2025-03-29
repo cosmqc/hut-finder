@@ -12,3 +12,8 @@ export const getHutCategory = (category: number): HutCategory => {
   return HutCategory[Object.keys(HutCategory)[category] as keyof typeof HutCategory];
 }
 
+export enum SortMethod {
+  ALPHABETICAL_ASC = "ALPHABETICAL_ASC",
+  ALPHABETICAL_DESC = "ALPHABETICAL_DESC",
+}
+

@@ -1,6 +1,6 @@
 type HutSearchResponse = Readonly<{
   categories: HutCategory[],
-  list: Hut[],
+  results: Hut[],
 }>
 
 type HutCategory = Readonly<{

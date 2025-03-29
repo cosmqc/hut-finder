@@ -6,6 +6,11 @@ package model
 
 import "strings"
 
+type HutSearchResult struct {
+	Results    []Hut            `json:"results"`
+	Categories []HutCategoryDto `json:"categories"`
+}
+
 type Hut struct {
 	Id               uint32      `json:"id" db:"id"`
 	GlobalId         string      `json:"globalId" db:"global_id"`
@@ -20,6 +25,11 @@ type Hut struct {
 	Lon              float64     `json:"lon" db:"lon"`
 	Bookable         bool        `json:"bookable" db:"bookable"`
 	HutCategory      HutCategory `json:"category" db:"category"`
+}
+
+type HutCategoryDto struct {
+	HutCategory HutCategory `json:"id"`
+	Name        string      `json:"name"`
 }
 
 // HutCategory This enum is mapped to its ordinal in the database.

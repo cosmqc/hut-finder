@@ -1,15 +1,25 @@
-import {Box, Chip, Input, List, ListItem, ListSubheader} from '@mui/joy';
+import {Box, Button, Chip, Input, List, ListItem, ListSubheader} from '@mui/joy';
 import Option from '@mui/joy/Option';
 import Select, {selectClasses} from '@mui/joy/Select';
 import {KeyboardArrowDown, Search} from '@mui/icons-material';
+import {SortMethod} from '../../types/Constants.ts';
 
 interface SearchSidebarProps {
   onSearch: (query: string) => void;
   onSelectedCategories: (categories: number[]) => void;
+  onSortMethod: (sortMethod: string) => void;
+  selectedCategories: number[];
+  selectedSortMethod: string;
+  categories: HutCategory[];
+  mounted: boolean;
+  search: () => void;
 }
 
 const SearchSidebar = (props: SearchSidebarProps) => {
-
+  // Evil little hack to bypass some weird component constraints
+  const handleSortMethodChange = (newValue: string | null) => {
+    props.onSortMethod(newValue === null ? 'ALPHABETICAL_ASC' : newValue);
+  };
   return (
     <Box
       component='nav'
@@ -67,6 +77,7 @@ const SearchSidebar = (props: SearchSidebarProps) => {
               size='sm'
               placeholder='Select hut categories…'
               multiple
+              value={props.selectedCategories}
               renderValue={(selected) => (
                 <Box sx={{ display: 'flex', gap: '0.25rem' }}>
                   {selected.map((selectedOption) => (
@@ -83,6 +94,7 @@ const SearchSidebar = (props: SearchSidebarProps) => {
                   },
                 },
               }}
+              onChange={(_, newValue: number[]) => props.onSelectedCategories(newValue)}
               indicator={<KeyboardArrowDown />}
               sx={{
                 width: 237,
@@ -94,12 +106,63 @@ const SearchSidebar = (props: SearchSidebarProps) => {
                 },
               }}
             >
-              <Option value='dog'>Dog</Option>
-              <Option value='cat'>Cat</Option>
-              <Option value='fish'>Fish</Option>
-              <Option value='bird'>Bird</Option>
+              {props.categories.map((category) => (
+                <Option value={category.id}>{category.name}</Option>
+              ))}
             </Select>
           </ListItem>
+        </ListItem>
+        <ListItem nested>
+          <ListSubheader
+            sx={{
+              letterSpacing: '2px',
+              fontWeight: '800',
+            }}
+          >
+            Sort By
+          </ListSubheader>
+          <ListItem>
+            <Select
+              size='sm'
+              defaultValue={props.selectedSortMethod}
+              value={props.selectedSortMethod}
+              slotProps={{
+                listbox: {
+                  sx: {
+                    width: '100%',
+                  },
+                },
+              }}
+              onChange={(_, value) => handleSortMethodChange(value)}
+              indicator={<KeyboardArrowDown />}
+              sx={{
+                width: 237,
+                [`& .${selectClasses.indicator}`]: {
+                  transition: '0.2s',
+                  [`&.${selectClasses.expanded}`]: {
+                    transform: 'rotate(-180deg)',
+                  },
+                },
+              }}
+            >
+              <Option value={SortMethod.ALPHABETICAL_ASC}>
+                Hut Name (Ascending)
+              </Option>
+              <Option value={SortMethod.ALPHABETICAL_DESC}>
+                Hut Name (Descending)
+              </Option>
+            </Select>
+          </ListItem>
+        </ListItem>
+        <ListItem>
+          <Button
+            startDecorator={<Search/>}
+            sx={{width: 237}}
+            loading={!props.mounted}
+            onClick={props.search}
+          >
+            Search
+          </Button>
         </ListItem>
       </List>
     </Box>

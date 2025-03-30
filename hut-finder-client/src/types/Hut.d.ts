@@ -15,6 +15,7 @@ type Hut = Readonly<{
   location: string,
   imageUrl: string,
   hutUrl: string,
+  region: string,
   facilities: string[],
   lat: number,
   lon: number,

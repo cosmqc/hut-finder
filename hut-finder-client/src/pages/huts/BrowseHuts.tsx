@@ -85,7 +85,7 @@ const BrowseHuts = () => {
             }}
           >
             <Box>
-              <CircularProgress variant="solid" size="lg" />
+              <CircularProgress variant='solid' size='lg' />
               <Typography>Loading Huts...</Typography>
             </Box>
           </Box>

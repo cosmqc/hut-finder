@@ -80,6 +80,10 @@ func GetAllHuts(query string, categories []int, sortMethod string) ([]model.Hut,
 		sql += " ORDER BY name ASC"
 	case "ALPHABETICAL_DESC":
 		sql += " ORDER BY name DESC"
+	case "CATEGORY_ASC":
+		sql += " ORDER BY category ASC, name ASC"
+	case "CATEGORY_DESC":
+		sql += " ORDER BY category DESC, name ASC"
 	default:
 		sql += " ORDER BY name ASC"
 	}

@@ -15,5 +15,7 @@ export const getHutCategory = (category: number): HutCategory => {
 export enum SortMethod {
   ALPHABETICAL_ASC = "ALPHABETICAL_ASC",
   ALPHABETICAL_DESC = "ALPHABETICAL_DESC",
+  CATEGORY_ASC = "CATEGORY_ASC",
+  CATEGORY_DESC = "CATEGORY_DESC",
 }
 

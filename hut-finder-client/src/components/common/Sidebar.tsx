@@ -8,10 +8,8 @@ interface SearchSidebarProps {
   onSearch: (query: string) => void;
   onSelectedCategories: (categories: number[]) => void;
   onSortMethod: (sortMethod: string) => void;
-  selectedCategories: number[];
-  selectedSortMethod: string;
   categories: HutCategory[];
-  mounted: boolean;
+  loading: boolean;
   search: () => void;
 }
 
@@ -20,6 +18,7 @@ const SearchSidebar = (props: SearchSidebarProps) => {
   const handleSortMethodChange = (newValue: string | null) => {
     props.onSortMethod(newValue === null ? 'ALPHABETICAL_ASC' : newValue);
   };
+
   return (
     <Box
       component='nav'
@@ -77,7 +76,7 @@ const SearchSidebar = (props: SearchSidebarProps) => {
               size='sm'
               placeholder='Select hut categories…'
               multiple
-              value={props.selectedCategories}
+              defaultValue={new Array<number>()}
               renderValue={(selected) => (
                 <Box sx={{ display: 'flex', gap: '0.25rem' }}>
                   {selected.map((selectedOption) => (
@@ -124,8 +123,7 @@ const SearchSidebar = (props: SearchSidebarProps) => {
           <ListItem>
             <Select
               size='sm'
-              defaultValue={props.selectedSortMethod}
-              value={props.selectedSortMethod}
+              defaultValue={SortMethod.ALPHABETICAL_ASC}
               slotProps={{
                 listbox: {
                   sx: {
@@ -146,10 +144,16 @@ const SearchSidebar = (props: SearchSidebarProps) => {
               }}
             >
               <Option value={SortMethod.ALPHABETICAL_ASC}>
-                Hut Name (Ascending)
+                Name (Ascending)
               </Option>
               <Option value={SortMethod.ALPHABETICAL_DESC}>
-                Hut Name (Descending)
+                Name (Descending)
+              </Option>
+              <Option value={SortMethod.CATEGORY_ASC}>
+                Category (Great Walks - Basic)
+              </Option>
+              <Option value={SortMethod.CATEGORY_DESC}>
+                Category (Basic - Great Walks)
               </Option>
             </Select>
           </ListItem>
@@ -158,7 +162,7 @@ const SearchSidebar = (props: SearchSidebarProps) => {
           <Button
             startDecorator={<Search/>}
             sx={{width: 237}}
-            loading={!props.mounted}
+            loading={props.loading}
             onClick={props.search}
           >
             Search

@@ -15,11 +15,14 @@ const BrowseHuts = () => {
   const [search, setSearch] = useState<string>('');
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const [sortMethod, setSortMethod] = useState<string>(SortMethod.ALPHABETICAL_ASC);
+  const [sidebarLoading, setSidebarLoading] = useState(false);
   const fetchHuts = async () => {
     try {
+      setSidebarLoading(true);
       const data: HutSearchResponse = await getHuts(search, selectedCategories, sortMethod);
       setSearchResult(data);
       setMounted(true);
+      setSidebarLoading(false);
     } catch (err) {
       console.error(err);
       setMounted(true);
@@ -61,10 +64,8 @@ const BrowseHuts = () => {
         onSearch={setSearch}
         onSelectedCategories={setSelectedCategories}
         onSortMethod={setSortMethod}
-        selectedSortMethod={sortMethod}
         categories={searchResult.categories}
-        selectedCategories={selectedCategories}
-        mounted={mounted}
+        loading={sidebarLoading}
         search={fetchHuts}
       />
       <Box

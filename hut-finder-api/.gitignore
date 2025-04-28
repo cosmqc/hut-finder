@@ -1,4 +1,5 @@
 hut-finder-api
 .env
 .vscode
-mod
+.idea
+pkg/mod

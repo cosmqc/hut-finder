@@ -1,35 +1,29 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import './App.css';
+import {BrowserRouter, Route, Routes} from 'react-router-dom';
+import BrowseHuts from './pages/huts/BrowseHuts.tsx';
+import Header from './components/common/Header.tsx';
+import {Box, CssBaseline, CssVarsProvider} from '@mui/joy';
+import NotFound from './pages/error/NotFound.tsx';
+import HutDetails from './pages/huts/HutDetails.tsx';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <CssVarsProvider>
+      <CssBaseline />
+      <Box className='App'  sx={{width: '100%'}}>
+        <BrowserRouter>
+          <Header/>
+          <Routes>
+            <Route path='/huts' element={<BrowseHuts/>}/>
+            <Route path='/notFound' element={<NotFound/>}/>
+            <Route path='/huts/:id' element={<HutDetails/>}/>
+
+          </Routes>
+        </BrowserRouter>
+      </Box>
+    </CssVarsProvider>
+
+  );
 }
 
-export default App
+export default App;

@@ -14,7 +14,7 @@ docker compose up --build
 ```
 
 Setting up environment:
-```python
+```bash
 # .env
 
 # The username of the user postgres creates
@@ -25,7 +25,7 @@ POSTGRES_PASSWORD=example
 POSTGRES_DB=example
 ```
 
-```python
+```bash
 # hut-finder-api/.env - `PORT` and `TOKEN_EXPIRY_HOURS` can be left empty
 
 # The port the API listens on, serves as a backup if the root .env isn't set
@@ -34,6 +34,8 @@ PORT=1337
 SIGNING_KEY=example
 # The time until session token expires, defaults to 12 if missing
 TOKEN_EXPIRY_HOURS=12
+# The database URL
+DB_URL=postgresql://localhost:5432/...
 ```
 
 ## Authors 

@@ -1,5 +1,6 @@
 # Database Setup Guide
-This guide runs you through the setup process of creating a database.
+This guide runs you through the setup process of creating a database.\
+Note that this is ONLY required if you don't want to Dockerise your database instance.\
 This assumes you have `postgres` installed.
 
 ## Database Creation

@@ -12,11 +12,13 @@ Ideally, you'd have the file format
 There are two main use cases for this:
 - Creating a fresh setup, including creating a new user, new database, and restoring from a backup file, or
 - Dropping the old database and restoring from a backup file.
-```
-sudo docker compose exec hut-finder-db /docker-entrypoint-initdb.d/restore.sh
-```
-while the container is running.
+```bash
+# Remove the old data from the container 
+sudo docker compose down -v
 
-You can supply the `new-user` flag to create a fresh setup from scratch. 
+# Build and run the container
+sudo docker compose up -d --build
 
-This assumes it is your first time creating this container.
+# Execute database restore on the container
+sudo docker exec -i hut-finder-hut-finder-db-1 pg_restore -U <POSTGRES_USER> -d <DATABASE_NAME> < /path/to/*.backup 
+```

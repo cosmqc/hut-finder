@@ -1,9 +1,9 @@
 import {useEffect, useState} from 'react';
 import HutList from '../../components/huts/HutList.tsx';
-import {getHuts} from '../../services/Huts.ts';
+import {getHuts} from '@/services/Huts.ts';
 import {Box, CircularProgress, Typography} from '@mui/joy';
-import SearchSidebar from '../../components/common/Sidebar.tsx';
-import {SortMethod} from '../../types/Constants.ts';
+import {SortMethod} from '@/types/Constants.ts';
+import SearchSidebar from "../../components/common/Sidebar.tsx";
 
 const BrowseHuts = () => {
   const [searchResult, setSearchResult] = useState<HutSearchResponse>({

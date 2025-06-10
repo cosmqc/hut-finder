@@ -1,20 +1,25 @@
-import {useEffect, useState} from 'react';
-import {useNavigate, useParams} from 'react-router-dom';
-import {getHutById} from '../../services/Huts.ts';
+import { useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import { getHutById } from '../../services/Huts.ts'
 import {
   Box,
-  Breadcrumbs, Button,
+  Breadcrumbs,
+  Button,
   CircularProgress,
   Link,
   List,
   ListItem,
-  Typography
-} from '@mui/joy';
-import {ChevronRightRounded, HomeRounded, OpenInNew} from '@mui/icons-material';
-import HutCategoryChip from '../../components/huts/HutCategoryChip.tsx';
+  Typography,
+} from '@mui/joy'
+import {
+  ChevronRightRounded,
+  HomeRounded,
+  OpenInNew,
+} from '@mui/icons-material'
+import HutCategoryChip from '../../components/huts/HutCategoryChip.tsx'
 
 const HutDetails = () => {
-  const {id} = useParams();
+  const { id } = useParams()
   const [hut, setHut] = useState<Hut>({
     id: -1,
     globalId: '',
@@ -28,28 +33,26 @@ const HutDetails = () => {
     lon: -1,
     bookable: false,
     category: -1,
-  });
-  const [mounted, setMounted] = useState<boolean>(false);
-  const navigate = useNavigate();
+  })
+  const [mounted, setMounted] = useState<boolean>(false)
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchHutDetails = async () => {
       try {
-        const data: Hut = await getHutById(parseInt(id!, 10));
-        setHut(data);
-        document.title = data.name;
-        setMounted(true);
+        const data: Hut = await getHutById(parseInt(id!, 10))
+        setHut(data)
+        document.title = data.name
+        setMounted(true)
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
-        navigate('/notFound');
+        navigate('/notFound')
       }
     }
-    fetchHutDetails();
-  }, []);
+    fetchHutDetails()
+  }, [])
 
-  useEffect(() => {
-
-  }, [mounted]);
+  useEffect(() => {}, [mounted])
 
   return (
     <Box>
@@ -63,71 +66,72 @@ const HutDetails = () => {
           }}
         >
           <Box>
-            <CircularProgress variant='solid' size='lg' />
+            <CircularProgress variant="solid" size="lg" />
             <Typography>Loading Hut...</Typography>
           </Box>
         </Box>
       ) : (
         <Box
           sx={{
-            padding: 2
+            padding: 2,
           }}
         >
           <Box>
             <Breadcrumbs
-              size='sm'
-              aria-label='breadcrumbs'
-              separator={<ChevronRightRounded/>}
-              sx={{pl: 0}}
+              size="sm"
+              aria-label="breadcrumbs"
+              separator={<ChevronRightRounded />}
+              sx={{ pl: 0 }}
             >
-              <Link
-                underline='none'
-                color='neutral'
-                href='/'
-                aria-label='Home'
-              >
+              <Link underline="none" color="neutral" href="/" aria-label="Home">
                 <HomeRounded />
               </Link>
               <Link
-                underline='hover'
-                color='neutral'
+                underline="hover"
+                color="neutral"
                 href={'/huts'}
                 sx={{ fontSize: 12, fontWeight: 500 }}
               >
                 Huts
               </Link>
-              <Typography color='primary' sx={{ fontWeight: 500, fontSize: 12 }}>
+              <Typography
+                color="primary"
+                sx={{ fontWeight: 500, fontSize: 12 }}
+              >
                 {hut.name}
               </Typography>
             </Breadcrumbs>
           </Box>
           <Box
             sx={{
-              textAlign: 'left'
+              textAlign: 'left',
             }}
           >
-            <Typography level='h1'>{hut.name}</Typography>
+            <Typography level="h1">{hut.name}</Typography>
             {HutCategoryChip(hut.category)}
-            <Typography>{hut.location}, {hut.region}</Typography>
+            <Typography>
+              {hut.location}, {hut.region}
+            </Typography>
             <List>
-              <Typography level='h3'>Facilities</Typography>
+              <Typography level="h3">Facilities</Typography>
               {hut.facilities.map((facility: string) => (
                 <ListItem>
-                  <Typography>
-                    {facility}
-                  </Typography>
+                  <Typography>{facility}</Typography>
                 </ListItem>
               ))}
             </List>
-            <Button component='a' href={hut.hutUrl} startDecorator={<OpenInNew />}>
+            <Button
+              component="a"
+              href={hut.hutUrl}
+              startDecorator={<OpenInNew />}
+            >
               View on DOC Website
             </Button>
           </Box>
         </Box>
       )}
     </Box>
-  );
-
+  )
 }
 
-export default HutDetails;
+export default HutDetails

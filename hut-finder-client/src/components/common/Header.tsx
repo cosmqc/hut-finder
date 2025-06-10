@@ -1,51 +1,57 @@
-import {Box, Button, IconButton, Stack, Tooltip, useColorScheme} from '@mui/joy';
-import {CabinRounded, DarkModeRounded, LightModeRounded} from '@mui/icons-material';
-import React from 'react';
-import {useNavigate} from 'react-router-dom';
+import {
+  Box,
+  Button,
+  IconButton,
+  Stack,
+  Tooltip,
+  useColorScheme,
+} from '@mui/joy'
+import {
+  CabinRounded,
+  DarkModeRounded,
+  LightModeRounded,
+} from '@mui/icons-material'
+import React from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const ToggleColourScheme = () => {
-  const {mode, setMode} = useColorScheme();
-  const [mounted, setMounted] = React.useState(false);
+  const { mode, setMode } = useColorScheme()
+  const [mounted, setMounted] = React.useState(false)
   React.useEffect(() => {
-    setMounted(true);
-  }, []);
+    setMounted(true)
+  }, [])
   if (!mounted) {
-    return (
-      <IconButton
-        size='sm'
-        variant='outlined'
-        color='primary'/>
-    );
+    return <IconButton size="sm" variant="outlined" color="primary" />
   }
   return (
     <Tooltip title={mode === 'light' ? 'Dark Mode' : 'Light Mode'}>
       <IconButton
-        data-screenshot='toggle-mode'
-        size='sm'
-        variant='plain'
-        color='neutral'
+        data-screenshot="toggle-mode"
+        size="sm"
+        variant="plain"
+        color="neutral"
         sx={{
           alignSelf: 'center',
         }}
         onClick={() => {
           if (mode === 'light') {
-            setMode('dark');
+            setMode('dark')
           } else {
-            setMode('light');
+            setMode('light')
           }
         }}
       >
-        {mode === 'light' ? <DarkModeRounded/> : <LightModeRounded/>}
+        {mode === 'light' ? <DarkModeRounded /> : <LightModeRounded />}
       </IconButton>
     </Tooltip>
-  );
+  )
 }
 
 const Header = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   return (
     <Box
-      component='header'
+      component="header"
       sx={{
         display: 'flex',
         flexGrow: 1,
@@ -65,20 +71,21 @@ const Header = () => {
       }}
     >
       <Stack
-        direction='row'
+        direction="row"
         spacing={1}
         sx={{
           justifyContent: 'center',
           alignItems: 'center',
           display: {
             xs: 'none',
-            sm: 'flex'
+            sm: 'flex',
           },
-      }}>
+        }}
+      >
         <IconButton
-          size='md'
-          variant='outlined'
-          color='neutral'
+          size="md"
+          variant="outlined"
+          color="neutral"
           sx={{
             display: {
               xs: 'none',
@@ -88,18 +95,19 @@ const Header = () => {
           }}
           onClick={() => navigate('/')}
         >
-          <CabinRounded/>
+          <CabinRounded />
         </IconButton>
         <Button
-          variant='plain'
-          color='neutral'
-          aria-pressed='true'
-          component='a'
+          variant="plain"
+          color="neutral"
+          aria-pressed="true"
+          component="a"
           onClick={() => navigate('/huts')}
-          size='sm'
+          size="sm"
           sx={{
             alignSelf: 'center',
-          }}>
+          }}
+        >
           Huts
         </Button>
       </Stack>
@@ -111,10 +119,10 @@ const Header = () => {
           alignItems: 'center',
         }}
       >
-        <ToggleColourScheme/>
+        <ToggleColourScheme />
       </Box>
     </Box>
   )
 }
 
-export default Header;
+export default Header

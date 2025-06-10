@@ -1,27 +1,35 @@
-import {Box, Button, Chip, Input, List, ListItem, ListSubheader} from '@mui/joy';
-import Option from '@mui/joy/Option';
-import Select, {selectClasses} from '@mui/joy/Select';
-import {KeyboardArrowDown, Search} from '@mui/icons-material';
-import {SortMethod} from '../../types/Constants.ts';
+import {
+  Box,
+  Button,
+  Chip,
+  Input,
+  List,
+  ListItem,
+  ListSubheader,
+} from '@mui/joy'
+import Option from '@mui/joy/Option'
+import Select, { selectClasses } from '@mui/joy/Select'
+import { KeyboardArrowDown, Search } from '@mui/icons-material'
+import { SortMethod } from '../../types/Constants.ts'
 
 interface SearchSidebarProps {
-  onSearch: (query: string) => void;
-  onSelectedCategories: (categories: number[]) => void;
-  onSortMethod: (sortMethod: string) => void;
-  categories: HutCategory[];
-  loading: boolean;
-  search: () => void;
+  onSearch: (query: string) => void
+  onSelectedCategories: (categories: number[]) => void
+  onSortMethod: (sortMethod: string) => void
+  categories: HutCategory[]
+  loading: boolean
+  search: () => void
 }
 
 const SearchSidebar = (props: SearchSidebarProps) => {
   // Evil little hack to bypass some weird component constraints
   const handleSortMethodChange = (newValue: string | null) => {
-    props.onSortMethod(newValue === null ? 'ALPHABETICAL_ASC' : newValue);
-  };
+    props.onSortMethod(newValue === null ? 'ALPHABETICAL_ASC' : newValue)
+  }
 
   return (
     <Box
-      component='nav'
+      component="nav"
       sx={{
         p: 2,
         bgcolor: 'background.surface',
@@ -35,7 +43,7 @@ const SearchSidebar = (props: SearchSidebarProps) => {
       }}
     >
       <List
-        size='md'
+        size="md"
         sx={{
           '--ListItem-radius': 'var(--joy-radius-sm)',
           '--List-gap': '4px',
@@ -50,17 +58,15 @@ const SearchSidebar = (props: SearchSidebarProps) => {
           >
             Search
           </ListSubheader>
-            <ListItem>
-              <Input
-                size='sm'
-                variant='outlined'
-                placeholder='Search hut name…'
-                startDecorator={
-                  <Search/>
-                }
-                onChange={(e) => props.onSearch(e.target.value)}
-              />
-            </ListItem>
+          <ListItem>
+            <Input
+              size="sm"
+              variant="outlined"
+              placeholder="Search hut name…"
+              startDecorator={<Search />}
+              onChange={(e) => props.onSearch(e.target.value)}
+            />
+          </ListItem>
         </ListItem>
         <ListItem nested>
           <ListSubheader
@@ -73,14 +79,14 @@ const SearchSidebar = (props: SearchSidebarProps) => {
           </ListSubheader>
           <ListItem>
             <Select
-              size='sm'
-              placeholder='Select hut categories…'
+              size="sm"
+              placeholder="Select hut categories…"
               multiple
               defaultValue={new Array<number>()}
               renderValue={(selected) => (
                 <Box sx={{ display: 'flex', gap: '0.25rem' }}>
                   {selected.map((selectedOption) => (
-                    <Chip variant='soft' color='primary'>
+                    <Chip variant="soft" color="primary">
                       {selectedOption.label}
                     </Chip>
                   ))}
@@ -93,7 +99,9 @@ const SearchSidebar = (props: SearchSidebarProps) => {
                   },
                 },
               }}
-              onChange={(_, newValue: number[]) => props.onSelectedCategories(newValue)}
+              onChange={(_, newValue: number[]) =>
+                props.onSelectedCategories(newValue)
+              }
               indicator={<KeyboardArrowDown />}
               sx={{
                 width: 237,
@@ -122,7 +130,7 @@ const SearchSidebar = (props: SearchSidebarProps) => {
           </ListSubheader>
           <ListItem>
             <Select
-              size='sm'
+              size="sm"
               defaultValue={SortMethod.ALPHABETICAL_ASC}
               slotProps={{
                 listbox: {
@@ -160,8 +168,8 @@ const SearchSidebar = (props: SearchSidebarProps) => {
         </ListItem>
         <ListItem>
           <Button
-            startDecorator={<Search/>}
-            sx={{width: 237}}
+            startDecorator={<Search />}
+            sx={{ width: 237 }}
             loading={props.loading}
             onClick={props.search}
           >
@@ -171,6 +179,6 @@ const SearchSidebar = (props: SearchSidebarProps) => {
       </List>
     </Box>
   )
-};
+}
 
-export default SearchSidebar;
+export default SearchSidebar

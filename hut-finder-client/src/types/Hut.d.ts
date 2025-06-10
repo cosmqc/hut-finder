@@ -23,3 +23,7 @@ type Hut = Readonly<{
   category: number,
 }>
 
+type ApiResponse = {
+  content: HutSearchResponse,
+  state: SearchState
+}

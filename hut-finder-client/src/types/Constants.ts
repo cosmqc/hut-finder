@@ -19,3 +19,9 @@ export enum SortMethod {
   CATEGORY_DESC = "CATEGORY_DESC",
 }
 
+export enum SearchState {
+  LOADING,
+  SUCCESS,
+  ERROR
+}
+

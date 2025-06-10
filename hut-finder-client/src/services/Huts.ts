@@ -1,13 +1,9 @@
 import axiosInstance from './Api.ts';
 
 
-export const getHuts = async (query: string, categories: number[], sortMethod: string): Promise<HutSearchResponse> => {
+export const getHuts = async (params: {query: string, categories: number[], sortMethod: string}): Promise<HutSearchResponse> => {
   const response = await axiosInstance.get<HutSearchResponse>('/public/huts', {
-    params: {
-      query: query,
-      categories: categories,
-      sortMethod: sortMethod,
-    }
+    params: params
   });
   return response.data;
 }

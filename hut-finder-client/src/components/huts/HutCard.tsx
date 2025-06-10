@@ -1,29 +1,32 @@
 import {
-  AspectRatio,
   Card,
   CardContent,
-  CardOverflow,
-  CardProps,
-  Link,
-  Typography,
-} from '@mui/joy'
-import HutCategoryChip from './HutCategoryChip.tsx'
-import HutImage from './HutImage.tsx'
+  CardDescription,
+  CardTitle,
+} from '@/components/ui/card.tsx'
+import { useNavigate } from 'react-router-dom'
+import { AspectRatio } from '@/components/ui/aspect-ratio.tsx'
+import HutImage from '@/components/huts/HutImage.tsx'
+import { Badge } from '@/components/ui/badge.tsx'
+import { getHutCategory } from '@/types/Constants.ts'
 
-const HutCard = ({ hut, ...props }: { hut: Hut } & CardProps) => {
+const HutCard = (props: { hut: Hut }) => {
+  const navigate = useNavigate()
   return (
-    <Card {...props}>
-      <CardOverflow>
-        <AspectRatio ratio="2">{HutImage(hut)}</AspectRatio>
-      </CardOverflow>
-      <CardContent>
-        <Link overlay underline="none" href={`/huts/${hut.id}`}>
-          <Typography level="title-md">{hut.name}</Typography>
-        </Link>
-        <Typography level="body-sm" sx={{ textAlign: 'left' }}>
-          {hut.location}
-        </Typography>
-        {HutCategoryChip(hut.category)}
+    <Card
+      className="flex flex-col"
+      onClick={() => navigate(`/huts/${props.hut.id}`)}
+    >
+      <CardContent className="flex flex-col flex-grow">
+        <AspectRatio ratio={3 / 2} className="rounded-lg">
+          {HutImage(props.hut)}
+        </AspectRatio>
+        <CardTitle>{props.hut.name}</CardTitle>
+        <CardDescription className="text-xs">
+          {props.hut.location}
+        </CardDescription>
+        {/*TODO: fix spacing between these two */}
+        <Badge className="mt-auto">{getHutCategory(props.hut.category)}</Badge>
       </CardContent>
     </Card>
   )

@@ -1,7 +1,6 @@
-import { Box, Button, Typography } from '@mui/joy'
 import { useEffect } from 'react'
-import { ArrowBackIos } from '@mui/icons-material'
 import { useNavigate } from 'react-router-dom'
+import { Button } from '@/components/ui/button.tsx'
 
 const NotFound = () => {
   const navigate = useNavigate()
@@ -9,24 +8,12 @@ const NotFound = () => {
     document.title = 'Not Found'
   })
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: '100%',
-        minHeight: '100vh',
-      }}
-    >
-      <Box sx={{ textAlign: 'center' }}>
-        <Typography level="h1" sx={{ padding: '1rem' }}>
-          We couldn't find the page you were looking for.
-        </Typography>
-        <Button startDecorator={<ArrowBackIos />} onClick={() => navigate(-1)}>
-          Go Back
-        </Button>
-      </Box>
-    </Box>
+    <div className="flex flex-col justify-center items-center w-full h-full gap-2">
+      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
+        We couldn't find the page you were looking for.
+      </h3>
+      <Button onClick={() => navigate(-1)}>Go Back</Button>
+    </div>
   )
 }
 

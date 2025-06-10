@@ -21,3 +21,15 @@ export const stringToColour = (
 
   return color
 }
+
+export const pluraliseWord = (
+  count: number,
+  word: string,
+  returnWordOnly: boolean = false
+): string => {
+  const str = `${word}${count > 1 ? 's' : ''}`
+  if (returnWordOnly) {
+    return str
+  }
+  return `${count} ${str}`
+}

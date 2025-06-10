@@ -1,102 +1,220 @@
+import { LoadingSpinner } from '@/components/common/LoadingSpinner.tsx'
 import { useEffect, useState } from 'react'
-import HutList from '../../components/huts/HutList.tsx'
 import { getHuts } from '@/services/Huts.ts'
-import { Box, CircularProgress, Typography } from '@mui/joy'
-import { SortMethod } from '@/types/Constants.ts'
-import SearchSidebar from '../../components/common/Sidebar.tsx'
+import { SearchState, SortMethod } from '@/types/Constants.ts'
+import HutList from '@/components/huts/HutList.tsx'
+import { Button } from '@/components/ui/button.tsx'
+import { ChevronsUpDown } from 'lucide-react'
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { Input } from '@/components/ui/input.tsx'
+import { Separator } from '@/components/ui/separator.tsx'
 
 const BrowseHuts = () => {
-  const [searchResult, setSearchResult] = useState<HutSearchResponse>({
-    categories: [],
-    results: [],
+  const [query, setQuery] = useState('')
+  const [searchResult, setSearchResult] = useState<ApiResponse>({
+    content: {
+      categories: [],
+      results: [],
+    } satisfies HutSearchResponse,
+    state: SearchState.LOADING,
   })
-  const [error, setError] = useState<string | null>(null)
-  const [mounted, setMounted] = useState<boolean>(false)
-  const [search, setSearch] = useState<string>('')
-  const [selectedCategories, setSelectedCategories] = useState<number[]>([])
-  const [sortMethod, setSortMethod] = useState<string>(
-    SortMethod.ALPHABETICAL_ASC
-  )
-  const [sidebarLoading, setSidebarLoading] = useState(false)
-  const fetchHuts = async () => {
-    try {
-      setSidebarLoading(true)
-      const data: HutSearchResponse = await getHuts(
-        search,
-        selectedCategories,
-        sortMethod
-      )
-      setSearchResult(data)
-      setMounted(true)
-      setSidebarLoading(false)
-    } catch (err) {
-      console.error(err)
-      setMounted(true)
-      setError('Failed to fetch huts. Please try again later.')
-    }
-  }
+  const [searchParams, setSearchParams] = useState<{
+    query: string
+    categories: number[]
+    sortMethod: string
+  }>({
+    query: '',
+    categories: [],
+    sortMethod: SortMethod.ALPHABETICAL_ASC,
+  })
+  const sortMethods: { title: string; sortMethod: SortMethod }[] = [
+    {
+      title: 'Name (Ascending)',
+      sortMethod: SortMethod.ALPHABETICAL_ASC,
+    },
+    {
+      title: 'Name (Descending)',
+      sortMethod: SortMethod.ALPHABETICAL_DESC,
+    },
+    {
+      title: 'Category (Great Walks - Basic)',
+      sortMethod: SortMethod.CATEGORY_ASC,
+    },
+    {
+      title: 'Category (Basic - Great Walks)',
+      sortMethod: SortMethod.CATEGORY_DESC,
+    },
+  ]
+
   useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearchParams((prev) => ({ ...prev, query: query }))
+    }, 500) // 500ms delay to debounce
+
+    return () => clearTimeout(timer)
+  }, [query])
+
+  useEffect(() => {
+    const fetchHuts = async () => {
+      setSearchResult((prevState) => ({
+        ...prevState,
+        state: SearchState.LOADING,
+      }))
+      getHuts(searchParams).then(
+        (response) => {
+          setSearchResult({ content: response, state: SearchState.SUCCESS })
+        },
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        (_error) => {
+          setSearchResult((prevState) => ({
+            ...prevState,
+            state: SearchState.ERROR,
+          }))
+        }
+      )
+    }
     document.title = 'Browse Huts'
     fetchHuts()
-  }, [])
+  }, [searchParams])
 
-  useEffect(() => {}, [mounted])
-
-  if (error) {
+  const searchHeader = () => {
     return (
-      <Box
-        sx={{
-          width: '100%',
-          textAlign: 'center',
-          padding: 2,
-        }}
-      >
-        {error}
-      </Box>
+      <header className="w-full flex h-4 shrink-0 mt-5 gap-1 mb-4 pb-2 border-b items-end">
+        <div className="flex w-full max-w-sm items-center gap-2">
+          <Input
+            key="search-input"
+            placeholder="Search"
+            onChange={(e) => setQuery(e.target.value)}
+            value={query}
+          />
+        </div>
+        <div className="flex gap-2 ml-auto">
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <Button
+                variant="outline"
+                role="combobox"
+                className="w-[250px] justify-between"
+              >
+                Select Categories...
+                <ChevronsUpDown className="opacity-50" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              className="w-[200px] p-0"
+              side="bottom"
+              align="start"
+            >
+              <DropdownMenuLabel>Hut Categories</DropdownMenuLabel>
+              <Separator />
+              {searchResult.content.categories.map((category) => (
+                <DropdownMenuCheckboxItem
+                  checked={searchParams.categories.includes(category.id)}
+                  onCheckedChange={(checked) => {
+                    if (checked) {
+                      setSearchParams((prevState) => ({
+                        ...prevState,
+                        categories: [...prevState.categories, category.id],
+                      }))
+                    } else {
+                      setSearchParams((prevState) => ({
+                        ...prevState,
+                        categories: prevState.categories.filter(
+                          (id) => id !== category.id
+                        ),
+                      }))
+                    }
+                  }}
+                >
+                  {category.name}
+                </DropdownMenuCheckboxItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <Button
+                variant="outline"
+                role="combobox"
+                className="w-[250px] justify-between"
+              >
+                {
+                  sortMethods.find(
+                    (method) => method.sortMethod === searchParams.sortMethod
+                  )?.title
+                }
+                <ChevronsUpDown className="opacity-50" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              className="w-[200px] p-0"
+              side="bottom"
+              align="start"
+            >
+              <DropdownMenuRadioGroup
+                value={searchParams.sortMethod}
+                onValueChange={(newMethod) =>
+                  setSearchParams((prevState) => ({
+                    ...prevState,
+                    sortMethod: newMethod,
+                  }))
+                }
+              >
+                {sortMethods.map((method) => (
+                  <DropdownMenuRadioItem
+                    key={method.title}
+                    value={method.sortMethod}
+                  >
+                    {method.title}
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </header>
     )
   }
+
+  const content = () => {
+    switch (searchResult.state) {
+      case SearchState.LOADING:
+        return (
+          <div className="flex flex-col items-center h-full justify-center">
+            <LoadingSpinner className="mr-2 h-5 w-5 animate-spin" />
+            <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
+              Loading Huts...
+            </h4>
+          </div>
+        )
+      case SearchState.SUCCESS:
+        return (
+          <div className="w-full h-full">
+            <HutList huts={searchResult.content.results} />
+          </div>
+        )
+      case SearchState.ERROR:
+        return (
+          <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
+            Failed to fetch huts. Please try again later.
+          </h4>
+        )
+    }
+  }
+
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        height: '100vh',
-        overflow: 'hidden',
-      }}
-    >
-      <SearchSidebar
-        onSearch={setSearch}
-        onSelectedCategories={setSelectedCategories}
-        onSortMethod={setSortMethod}
-        categories={searchResult.categories}
-        loading={sidebarLoading}
-        search={fetchHuts}
-      />
-      <Box
-        sx={{
-          flexGrow: 1,
-          overflowY: 'auto',
-          padding: 2,
-        }}
-      >
-        {!mounted ? (
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: '100%',
-            }}
-          >
-            <Box>
-              <CircularProgress variant="solid" size="lg" />
-              <Typography>Loading Huts...</Typography>
-            </Box>
-          </Box>
-        ) : (
-          <HutList huts={searchResult.results} />
-        )}
-      </Box>
-    </Box>
+    <div className="flex flex-1 flex-col p-4 items-center">
+      {searchHeader()}
+      {content()}
+    </div>
   )
 }
 

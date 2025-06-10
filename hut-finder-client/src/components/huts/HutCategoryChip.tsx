@@ -1,5 +1,5 @@
 import React from 'react'
-import { getHutCategory, HutCategory } from '../../types/Constants.ts'
+import { getHutCategory, HutCategory } from '@/types/Constants.ts'
 import { Chip } from '@mui/joy'
 import { stringToColour } from '../common/Util.ts'
 

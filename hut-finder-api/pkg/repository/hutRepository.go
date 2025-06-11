@@ -31,7 +31,6 @@ func GetHutById(id uint64) (*model.Hut, error) {
 		return nil, fmt.Errorf("could not collect row: %w", err)
 	}
 
-	model.PopulateFacilities(&hut)
 	return &hut, nil
 }
 
@@ -50,7 +49,6 @@ func GetHutByGlobalId(globalId string) (*model.Hut, error) {
 		log.Printf("could not collect row: %v", err)
 		return nil, fmt.Errorf("could not collect row: %w", err)
 	}
-	model.PopulateFacilities(&hut)
 	return &hut, nil
 }
 
@@ -102,7 +100,6 @@ func GetAllHuts(query string, categories []int, sortMethod string) ([]model.Hut,
 
 	var result []model.Hut
 	for _, hut := range huts {
-		model.PopulateFacilities(&hut)
 		result = append(result, hut)
 	}
 

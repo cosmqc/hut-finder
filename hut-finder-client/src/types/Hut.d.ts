@@ -21,9 +21,13 @@ type Hut = Readonly<{
   lon: number
   bookable: boolean
   category: number
+  description: string
+  largeImageUrl: string
+  status: string
+  numberOfBunks: number
 }>
 
-type ApiResponse = {
-  content: HutSearchResponse
+type ApiResponse<T> = {
+  content: T
   state: SearchState
 }

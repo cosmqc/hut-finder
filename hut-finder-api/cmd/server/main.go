@@ -9,6 +9,7 @@ import (
 	"hut-finder-api/pkg/api"
 	"hut-finder-api/pkg/config"
 	"hut-finder-api/pkg/db"
+	"hut-finder-api/pkg/external"
 	"log"
 )
 
@@ -24,7 +25,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Could not initialise database connection: %v", err)
 	}
-
+	external.NewClient()
 	r := api.CreateServer()
 
 	log.Printf("Server is running on port %s...", port)

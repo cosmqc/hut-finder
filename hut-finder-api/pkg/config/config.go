@@ -13,7 +13,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-// Loads config from environment variables.
+// LoadConfig Loads config from environment variables.
 func LoadConfig() error {
 	if err := godotenv.Load(); err != nil {
 		return fmt.Errorf("could not load configurations: %w", err)
@@ -21,7 +21,7 @@ func LoadConfig() error {
 	return nil
 }
 
-// Gets port from environment variables. Returns 8080 if none specified.
+// GetPort Gets port from environment variables. Returns 8080 if none specified.
 func GetPort() string {
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -30,17 +30,17 @@ func GetPort() string {
 	return port
 }
 
-// Returns DB_URL. If this value is blank, the server will panic at startup.
+// GetDbUrl Returns DB_URL. If this value is blank, the server will panic at startup.
 func GetDbUrl() string {
 	return os.Getenv("DB_URL")
 }
 
-// Returns SIGNING_KEY. Used to sign JWTs.
+// GetSigningKey Returns SIGNING_KEY. Used to sign JWTs.
 func GetSigningKey() string {
 	return os.Getenv("SIGNING_KEY")
 }
 
-// Gets token expiry from environment variables. Returns 12 if none specified, or invalid.
+// GetTokenExpiryHours Gets token expiry from environment variables. Returns 12 if none specified, or invalid.
 func GetTokenExpiryHours() int64 {
 	expHours := os.Getenv("TOKEN_EXPIRY_HOURS")
 	if expHours == "" {
@@ -54,4 +54,12 @@ func GetTokenExpiryHours() int64 {
 		return 12
 	}
 	return hours
+}
+
+func GetExternalApiBaseUrl() string {
+	return os.Getenv("EXTERNAL_API_BASE_URL")
+}
+
+func GetExternalApiKey() string {
+	return os.Getenv("EXTERNAL_API_KEY")
 }

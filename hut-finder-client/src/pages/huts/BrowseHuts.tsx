@@ -19,11 +19,13 @@ import { Separator } from '@/components/ui/separator.tsx'
 
 const BrowseHuts = () => {
   const [query, setQuery] = useState('')
-  const [searchResult, setSearchResult] = useState<ApiResponse>({
+  const [searchResult, setSearchResult] = useState<
+    ApiResponse<HutSearchResponse>
+  >({
     content: {
       categories: [],
       results: [],
-    } satisfies HutSearchResponse,
+    },
     state: SearchState.LOADING,
   })
   const [searchParams, setSearchParams] = useState<{

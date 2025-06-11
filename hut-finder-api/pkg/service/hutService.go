@@ -6,6 +6,7 @@ package service
 
 import (
 	"fmt"
+	"hut-finder-api/pkg/external"
 	"hut-finder-api/pkg/model"
 	"hut-finder-api/pkg/repository"
 	"log"
@@ -26,7 +27,7 @@ func GetHutById(id string) (*model.Hut, error) {
 		log.Printf("repository threw error: %v", err)
 		return nil, fmt.Errorf("repository threw error: %w", err)
 	}
-	return hut, nil
+	return addHutDetails(hut), nil
 }
 
 // GetHutByGlobalId Gets hut by global id.
@@ -36,7 +37,7 @@ func GetHutByGlobalId(globalId string) (*model.Hut, error) {
 		log.Printf("repository threw error: %v", err)
 		return nil, fmt.Errorf("repository threw error: %w", err)
 	}
-	return hut, nil
+	return addHutDetails(hut), nil
 }
 
 // GetAllHuts Gets all huts.
@@ -63,4 +64,18 @@ func createSearchResult(result []model.Hut) *model.HutSearchResult {
 		Results:    result,
 		Categories: categories,
 	}
+}
+
+func addHutDetails(hut *model.Hut) *model.Hut {
+	res, err := external.GetHutDetails(hut.ExternalId)
+	if err != nil {
+		log.Printf("failed to get hut details: %v", err)
+		return hut
+	}
+	hut.Facilities = res.Facilities
+	hut.Description = res.Description
+	hut.LargeImageUrl = res.Image
+	hut.NumberOfBunks = res.NumberOfBunks
+	hut.Status = res.Status
+	return hut
 }

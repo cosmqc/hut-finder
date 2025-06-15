@@ -74,8 +74,17 @@ func addHutDetails(hut *model.Hut) *model.Hut {
 	}
 	hut.Facilities = res.Facilities
 	hut.Description = res.Description
-	hut.LargeImageUrl = res.Image
 	hut.NumberOfBunks = res.NumberOfBunks
 	hut.Status = res.Status
+	return addHutAlerts(hut)
+}
+
+func addHutAlerts(hut *model.Hut) *model.Hut {
+	res, err := external.GetRegionalAlerts(hut.RegionId)
+	if err != nil {
+		log.Printf("failed to get alerts: %v", err)
+		return hut
+	}
+	hut.Alerts = res
 	return hut
 }

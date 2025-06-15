@@ -4,29 +4,33 @@ Copyright © 2024 Yunu Cho yunu121@gmail.com, Jake Dalton cqsmico7@gmail.com
 
 package model
 
+import "hut-finder-api/pkg/external"
+
 type HutSearchResult struct {
 	Results    []Hut            `json:"results"`
 	Categories []HutCategoryDto `json:"categories"`
 }
 
 type Hut struct {
-	Id            uint32      `json:"id" db:"id"`
-	GlobalId      string      `json:"globalId" db:"global_id"`
-	Name          string      `json:"name" db:"name"`
-	Location      string      `json:"location" db:"location"`
-	Region        string      `json:"region" db:"region"`
-	ImageUrl      string      `json:"imageUrl" db:"image_url"`
-	HutUrl        string      `json:"hutUrl" db:"hut_url"`
-	Facilities    []string    `json:"facilities" db:"-"`
-	Lat           float64     `json:"lat" db:"lat"`
-	Lon           float64     `json:"lon" db:"lon"`
-	Bookable      bool        `json:"bookable" db:"bookable"`
-	HutCategory   HutCategory `json:"category" db:"category"`
-	Description   string      `json:"description" db:"-"`
-	LargeImageUrl string      `json:"largeImageUrl" db:"-"`
-	Status        string      `json:"status" db:"-"`
-	NumberOfBunks int         `json:"numberOfBunks" db:"-"`
-	ExternalId    uint32      `json:"-" db:"external_id"`
+	Id            uint32              `json:"id" db:"id"`
+	GlobalId      string              `json:"globalId" db:"global_id"`
+	Name          string              `json:"name" db:"name"`
+	Location      string              `json:"location" db:"location"`
+	Region        string              `json:"region" db:"region"`
+	ThumbnailUrl  string              `json:"thumbnailUrl" db:"thumbnail_url"`
+	HutUrl        string              `json:"hutUrl" db:"hut_url"`
+	Facilities    []string            `json:"facilities" db:"-"`
+	Lat           float64             `json:"lat" db:"lat"`
+	Lon           float64             `json:"lon" db:"lon"`
+	Bookable      bool                `json:"bookable" db:"bookable"`
+	HutCategory   HutCategory         `json:"category" db:"category"`
+	Description   string              `json:"description" db:"-"`
+	Status        string              `json:"status" db:"-"`
+	NumberOfBunks int                 `json:"numberOfBunks" db:"-"`
+	ExternalId    uint32              `json:"-" db:"external_id"`
+	ImageUrl      string              `json:"imageUrl" db:"image_url"`
+	RegionId      string              `json:"-" db:"region_id"`
+	Alerts        []external.ApiAlert `json:"alerts" db:"-"`
 }
 
 type HutCategoryDto struct {

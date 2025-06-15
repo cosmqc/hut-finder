@@ -98,10 +98,5 @@ func GetAllHuts(query string, categories []int, sortMethod string) ([]model.Hut,
 		return nil, err
 	}
 
-	var result []model.Hut
-	for _, hut := range huts {
-		result = append(result, hut)
-	}
-
-	return result, nil
+	return huts, nil
 }

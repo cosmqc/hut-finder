@@ -22,9 +22,23 @@ type Hut = Readonly<{
   bookable: boolean
   category: number
   description: string
-  largeImageUrl: string
   status: string
   numberOfBunks: number
+  alerts: Alert[]
+}>
+
+type Alert = Readonly<{
+  id: number
+  summary: string
+  description: string
+  descriptionHtml: string
+  startDate: string
+  endDate: string
+  lastUpdated: string
+  regions: {
+    id: string
+    name: string
+  }[]
 }>
 
 type ApiResponse<T> = {

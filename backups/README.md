@@ -14,10 +14,10 @@ sudo docker compose down -v
 sudo docker compose up -d --build
 
 # Execute database restore on the container
-cat <file-name>.sql | docker exec -i hut-finder-hut-finder-db-1 psql -U postgres
+cat <file-name>.sql | docker exec -i hut-finder-postgres-1 psql -U postgres
 ```
 # Backup
-If you ever want to back up, then run:
+If you ever want to back up, then run inside the docker container:
 ```bash
 pg_dumpall -c -U postgres > /<file-name>.sql
 ```

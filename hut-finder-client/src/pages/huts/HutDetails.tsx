@@ -153,7 +153,7 @@ const HutDetails = () => {
                 <Tabs defaultValue="details">
                   <TabsList>
                     <TabsTrigger value="details">Hut Details</TabsTrigger>
-                    <TabsTrigger value="alerts">Alerts</TabsTrigger>
+                    <TabsTrigger value="alerts">Regional Alerts</TabsTrigger>
                   </TabsList>
                   <TabsContent value="details">
                     <Card className="h-[360px]">

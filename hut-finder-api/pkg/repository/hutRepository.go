@@ -53,7 +53,7 @@ func GetHutByGlobalId(globalId string) (*model.Hut, error) {
 }
 
 // GetAllHuts Gets all huts.
-func GetAllHuts(query string, categories []int, sortMethod string) ([]model.Hut, error) {
+func GetAllHuts(query string, categories []int, sortMethod string, regions []string) ([]model.Hut, error) {
 	log.Printf("querying for all huts")
 	var sql string
 	var args []interface{}
@@ -71,6 +71,15 @@ func GetAllHuts(query string, categories []int, sortMethod string) ([]model.Hut,
 			args = append(args, category)
 		}
 
+		sql += strings.Join(placeholders, ", ") + ") "
+	}
+	if len(regions) > 0 {
+		sql += "AND region_id IN ("
+		var placeholders []string
+		for i, region := range regions {
+			placeholders = append(placeholders, fmt.Sprintf("$%d", i+2))
+			args = append(args, region)
+		}
 		sql += strings.Join(placeholders, ", ") + ") "
 	}
 	switch sortMethod {
@@ -99,4 +108,18 @@ func GetAllHuts(query string, categories []int, sortMethod string) ([]model.Hut,
 	}
 
 	return huts, nil
+}
+
+func GetHutRegions() ([]model.Region, error) {
+	rows, err := db.GetDatabase().Query(context.Background(),
+		"SELECT DISTINCT region_id, region FROM hut")
+	if err != nil {
+		log.Printf("could not query database: %v", err)
+	}
+	defer rows.Close()
+	regions, err := pgx.CollectRows(rows, pgx.RowToStructByName[model.Region])
+	if err != nil {
+		log.Printf("could not collect rows: %v", err)
+	}
+	return regions, nil
 }

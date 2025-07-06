@@ -57,7 +57,15 @@ func GetAllHuts(c *gin.Context) {
 		}
 	}
 
-	searchResult, err := service.GetAllHuts(query, categories, sortMethod)
+	var regions []string
+	if regionParams, ok := c.GetQueryArray("regions[]"); ok {
+		regions = make([]string, 0)
+		for _, i := range regionParams {
+			regions = append(regions, i)
+		}
+	}
+
+	searchResult, err := service.GetAllHuts(query, categories, sortMethod, regions)
 	if err != nil {
 		log.Printf("could not find huts: %v", err)
 		c.JSON(http.StatusInternalServerError, nil)

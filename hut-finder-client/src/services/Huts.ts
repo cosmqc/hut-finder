@@ -4,6 +4,7 @@ export const getHuts = async (params: {
   query: string
   categories: number[]
   sortMethod: string
+  regions: string[]
 }): Promise<HutSearchResponse> => {
   const response = await axiosInstance.get<HutSearchResponse>('/public/huts', {
     params: params,

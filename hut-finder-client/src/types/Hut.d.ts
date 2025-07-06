@@ -1,6 +1,7 @@
 type HutSearchResponse = Readonly<{
   categories: HutCategory[]
   results: Hut[]
+  regions: Region[]
 }>
 
 type HutCategory = Readonly<{
@@ -39,6 +40,11 @@ type Alert = Readonly<{
     id: string
     name: string
   }[]
+}>
+
+type Region = Readonly<{
+  id: string
+  name: string
 }>
 
 type ApiResponse<T> = {

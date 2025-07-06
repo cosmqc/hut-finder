@@ -21,7 +21,7 @@ var (
 	pgOnce     sync.Once
 )
 
-// Creates a new postgres connection pool.
+// NewPostgresConnection Creates a new postgres connection pool.
 func NewPostgresConnection(ctx context.Context) (*postgres, error) {
 	connStr := config.GetDbUrl()
 	var db *pgxpool.Pool
@@ -36,12 +36,12 @@ func NewPostgresConnection(ctx context.Context) (*postgres, error) {
 	return pgInstance, nil
 }
 
-// Closes the DB connection.
+// Close Closes the DB connection.
 func (pg *postgres) Close() {
 	pg.db.Close()
 }
 
-// Returns singleton database instance. Whenever repository calls are needed, import this module
+// GetDatabase Returns singleton database instance. Whenever repository calls are needed, import this module
 // and invoke this function!
 func GetDatabase() *pgxpool.Pool {
 	return pgInstance.db

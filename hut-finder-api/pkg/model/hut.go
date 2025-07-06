@@ -9,6 +9,7 @@ import "hut-finder-api/pkg/external"
 type HutSearchResult struct {
 	Results    []Hut            `json:"results"`
 	Categories []HutCategoryDto `json:"categories"`
+	Regions    []Region         `json:"regions"`
 }
 
 type Hut struct {
@@ -31,6 +32,11 @@ type Hut struct {
 	ImageUrl      string              `json:"imageUrl" db:"image_url"`
 	RegionId      string              `json:"-" db:"region_id"`
 	Alerts        []external.ApiAlert `json:"alerts" db:"-"`
+}
+
+type Region struct {
+	Id   string `json:"id" db:"region_id"`
+	Name string `json:"name" db:"region"`
 }
 
 type HutCategoryDto struct {

@@ -7,7 +7,9 @@ const HutList = (props: { huts: Hut[] }) => {
       <div className="flex flex-col">
         <header className="pb-3">
           <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
-            {pluraliseWord(props.huts.length, 'result')}
+            {props.huts.length > 0
+              ? pluraliseWord(props.huts.length, 'result')
+              : '0 results'}
           </h4>
         </header>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full h-full">

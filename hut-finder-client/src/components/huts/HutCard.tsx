@@ -14,10 +14,10 @@ const HutCard = (props: { hut: Hut }) => {
   const navigate = useNavigate()
   return (
     <Card
-      className="flex flex-col"
+      className="flex flex-col transition-all duration-200 hover:shadow-lg cursor-pointer"
       onClick={() => navigate(`/huts/${props.hut.id}`)}
     >
-      <CardContent className="flex flex-col flex-grow">
+      <CardContent className="flex flex-col flex-grow gap-1">
         <AspectRatio ratio={3 / 2} className="rounded-lg">
           {HutImage(props.hut)}
         </AspectRatio>
@@ -25,8 +25,8 @@ const HutCard = (props: { hut: Hut }) => {
         <CardDescription className="text-xs">
           {props.hut.location}
         </CardDescription>
-        {/*TODO: fix spacing between these two */}
-        <Badge className="mt-auto">{getHutCategory(props.hut.category)}</Badge>
+        <div className="flex-grow min-h-1" />
+        <Badge>{getHutCategory(props.hut.category)}</Badge>
       </CardContent>
     </Card>
   )

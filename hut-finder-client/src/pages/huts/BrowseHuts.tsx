@@ -1,7 +1,7 @@
 import { LoadingSpinner } from '@/components/common/LoadingSpinner.tsx'
 import { useEffect, useState } from 'react'
 import { getHuts } from '@/services/Huts.ts'
-import { SearchState, SortMethod } from '@/types/Constants.ts'
+import { getHutCategory, SearchState, SortMethod } from '@/types/Constants.ts'
 import HutList from '@/components/huts/HutList.tsx'
 import { Button } from '@/components/ui/button.tsx'
 import { ChevronsUpDown } from 'lucide-react'
@@ -25,6 +25,7 @@ const BrowseHuts = () => {
     content: {
       categories: [],
       results: [],
+      regions: [],
     },
     state: SearchState.LOADING,
   })
@@ -32,10 +33,12 @@ const BrowseHuts = () => {
     query: string
     categories: number[]
     sortMethod: string
+    regions: string[]
   }>({
     query: '',
     categories: [],
     sortMethod: SortMethod.ALPHABETICAL_ASC,
+    regions: [],
   })
   const sortMethods: { title: string; sortMethod: SortMethod }[] = [
     {
@@ -90,7 +93,7 @@ const BrowseHuts = () => {
   const searchHeader = () => {
     return (
       <header className="w-full flex h-4 shrink-0 mt-5 gap-1 mb-4 pb-2 border-b items-end">
-        <div className="flex w-full max-w-sm items-center gap-2">
+        <div className="flex w-full items-center gap-2">
           <Input
             key="search-input"
             placeholder="Search"
@@ -106,7 +109,67 @@ const BrowseHuts = () => {
                 role="combobox"
                 className="w-[250px] justify-between"
               >
-                Select Categories...
+                <span className="truncate">
+                  {searchParams.regions.length > 0
+                    ? searchParams.regions
+                        .map((id) => {
+                          const region = searchResult.content.regions.find(
+                            (region) => region.id === id
+                          )
+                          return region ? region.name : ''
+                        })
+                        .join(', ')
+                    : 'Select Region...'}
+                </span>
+                <ChevronsUpDown className="opacity-50" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              className="w-[200px] p-0"
+              side="bottom"
+              align="start"
+            >
+              <DropdownMenuLabel>Regions</DropdownMenuLabel>
+              <Separator />
+              {searchResult.content.regions.map((region, index) => (
+                <DropdownMenuCheckboxItem
+                  key={`region-${index}`}
+                  checked={searchParams.regions.includes(region.id)}
+                  onCheckedChange={(checked) => {
+                    if (checked) {
+                      setSearchParams((prevState) => ({
+                        ...prevState,
+                        regions: [...prevState.regions, region.id],
+                      }))
+                    } else {
+                      setSearchParams((prevState) => ({
+                        ...prevState,
+                        regions: prevState.regions.filter(
+                          (id) => id !== region.id
+                        ),
+                      }))
+                    }
+                  }}
+                >
+                  {region.name}
+                </DropdownMenuCheckboxItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <Button
+                variant="outline"
+                role="combobox"
+                className="w-[250px] justify-between"
+              >
+                <span className="truncate">
+                  {searchParams.categories.length > 0
+                    ? searchParams.categories
+                        .map((id) => getHutCategory(id))
+                        .join(', ')
+                    : 'Select Categories...'}
+                </span>
                 <ChevronsUpDown className="opacity-50" />
               </Button>
             </DropdownMenuTrigger>
@@ -117,8 +180,9 @@ const BrowseHuts = () => {
             >
               <DropdownMenuLabel>Hut Categories</DropdownMenuLabel>
               <Separator />
-              {searchResult.content.categories.map((category) => (
+              {searchResult.content.categories.map((category, index) => (
                 <DropdownMenuCheckboxItem
+                  key={`category-${index}`}
                   checked={searchParams.categories.includes(category.id)}
                   onCheckedChange={(checked) => {
                     if (checked) {

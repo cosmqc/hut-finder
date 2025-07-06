@@ -41,8 +41,8 @@ func GetHutByGlobalId(globalId string) (*model.Hut, error) {
 }
 
 // GetAllHuts Gets all huts.
-func GetAllHuts(query string, categories []int, sortMethod string) (*model.HutSearchResult, error) {
-	huts, err := repository.GetAllHuts(query, categories, sortMethod)
+func GetAllHuts(query string, categories []int, sortMethod string, regions []string) (*model.HutSearchResult, error) {
+	huts, err := repository.GetAllHuts(query, categories, sortMethod, regions)
 	if err != nil {
 		log.Printf("repository threw error: %v", err)
 		return nil, fmt.Errorf("repository threw error: %w", err)
@@ -60,9 +60,20 @@ func createSearchResult(result []model.Hut) *model.HutSearchResult {
 			Name:        i.String(),
 		})
 	}
+
+	regions, err := repository.GetHutRegions()
+	if err != nil {
+		log.Printf("failed to get hut regions: %v", err)
+		return &model.HutSearchResult{
+			Results:    result,
+			Categories: categories,
+			Regions:    []model.Region{},
+		}
+	}
 	return &model.HutSearchResult{
 		Results:    result,
 		Categories: categories,
+		Regions:    regions,
 	}
 }
 

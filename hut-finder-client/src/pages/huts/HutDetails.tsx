@@ -142,18 +142,19 @@ const HutDetails = () => {
             <div className="flex flex-row w-full h-full items-start">
               <div className="flex flex-col h-full items-start w-2/3 gap-4">
                 <AspectRatio ratio={16 / 9}>
-                  <img
-                    src={searchResult.content.imageUrl}
-                    alt={searchResult.content.name}
-                  />
+                  <img src={searchResult.content.imageUrl} alt="" />
                 </AspectRatio>
               </div>
               <Separator orientation="vertical" className="mx-4 h-full" />
               <div className="w-1/3 h-full flex flex-col gap-2">
                 <Tabs defaultValue="details">
                   <TabsList>
-                    <TabsTrigger value="details">Hut Details</TabsTrigger>
-                    <TabsTrigger value="alerts">Regional Alerts</TabsTrigger>
+                    <TabsTrigger className="cursor-pointer" value="details">
+                      Hut Details
+                    </TabsTrigger>
+                    <TabsTrigger className="cursor-pointer" value="alerts">
+                      Regional Alerts
+                    </TabsTrigger>
                   </TabsList>
                   <TabsContent value="details">
                     <Card className="h-[360px]">
@@ -162,8 +163,10 @@ const HutDetails = () => {
                           Facilities
                         </h4>
                         {searchResult.content.facilities.map(
-                          (facility: string) => (
-                            <p className="leading-7">{facility}</p>
+                          (facility: string, index: number) => (
+                            <p key={`facility-${index}`} className="leading-7">
+                              {facility}
+                            </p>
                           )
                         )}
                       </CardContent>

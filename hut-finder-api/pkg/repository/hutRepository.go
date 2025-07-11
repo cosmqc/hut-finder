@@ -57,7 +57,7 @@ func GetAllHuts(query string, categories []int, sortMethod string, regions []str
 	log.Printf("querying for all huts")
 	var sql string
 	var args []interface{}
-
+	var argIndex = 2
 	args = append(args, "%"+query+"%")
 
 	if len(categories) == 0 {
@@ -66,9 +66,10 @@ func GetAllHuts(query string, categories []int, sortMethod string, regions []str
 		sql = "SELECT * FROM hut WHERE name ILIKE $1 AND category IN ("
 		var placeholders []string
 
-		for i, category := range categories {
-			placeholders = append(placeholders, fmt.Sprintf("$%d", i+2))
+		for _, category := range categories {
+			placeholders = append(placeholders, fmt.Sprintf("$%d", argIndex))
 			args = append(args, category)
+			argIndex++
 		}
 
 		sql += strings.Join(placeholders, ", ") + ") "
@@ -76,9 +77,10 @@ func GetAllHuts(query string, categories []int, sortMethod string, regions []str
 	if len(regions) > 0 {
 		sql += "AND region_id IN ("
 		var placeholders []string
-		for i, region := range regions {
-			placeholders = append(placeholders, fmt.Sprintf("$%d", i+2))
+		for _, region := range regions {
+			placeholders = append(placeholders, fmt.Sprintf("$%d", argIndex))
 			args = append(args, region)
+			argIndex++
 		}
 		sql += strings.Join(placeholders, ", ") + ") "
 	}

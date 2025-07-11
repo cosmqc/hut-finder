@@ -1,5 +1,5 @@
 import { LoadingSpinner } from '@/components/common/LoadingSpinner.tsx'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { getHuts } from '@/services/Huts.ts'
 import { getHutCategory, SearchState, SortMethod } from '@/types/Constants.ts'
 import HutList from '@/components/huts/HutList.tsx'
@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input.tsx'
 import { Separator } from '@/components/ui/separator.tsx'
+import { debounce } from '@/components/common/Util.ts'
 
 const BrowseHuts = () => {
   const [query, setQuery] = useState('')
@@ -59,13 +60,18 @@ const BrowseHuts = () => {
     },
   ]
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setSearchParams((prev) => ({ ...prev, query: query }))
-    }, 500) // 500ms delay to debounce
 
-    return () => clearTimeout(timer)
-  }, [query])
+  const debouncedSearch = useCallback(
+    debounce((value: string) => {
+      setSearchParams(prev => ({ ...prev, query: value }));
+    }, 500),
+    []
+  );
+
+  const handleSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setQuery(e.target.value);
+    debouncedSearch(e.target.value);
+  };
 
   useEffect(() => {
     const fetchHuts = async () => {
@@ -90,6 +96,41 @@ const BrowseHuts = () => {
     fetchHuts()
   }, [searchParams])
 
+  const selectedRegionsText = useMemo(() => {
+    if (searchParams.regions.length === 0) return 'Select Region...'
+    return searchParams.regions
+      .map(id => searchResult.content.regions.find(region => region.id === id)?.name)
+      .filter(Boolean)
+      .join(', ');
+  }, [searchParams.regions, searchResult.content.regions]);
+
+  const selectedCategoriesText = useMemo(() => {
+    if (searchParams.categories.length === 0) return 'Select Category...'
+    return searchParams.categories
+        .map((id) => getHutCategory(id))
+        .join(', ')
+  }, [searchParams.categories]);
+
+  const handleCategoryToggle = useCallback((categoryId: number, checked: boolean) => {
+    setSearchParams(prevState => ({
+      ...prevState,
+      categories: checked
+        ? [...prevState.categories, categoryId]
+        : prevState.categories.filter(id => id !== categoryId)
+    }));
+  }, []);
+
+  const handleRegionToggle = useCallback((regionId: string, checked: boolean) => {
+    setSearchParams(prevState => ({
+      ...prevState,
+      regions: checked
+        ? [...prevState.regions, regionId]
+        : prevState.regions.filter(id => id !== regionId)
+    }));
+  }, []);
+
+
+
   const searchHeader = () => {
     return (
       <header className="w-full flex h-4 shrink-0 mt-5 gap-1 mb-4 pb-2 border-b items-end">
@@ -97,7 +138,7 @@ const BrowseHuts = () => {
           <Input
             key="search-input"
             placeholder="Search"
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={handleSearchInput}
             value={query}
           />
         </div>
@@ -110,16 +151,7 @@ const BrowseHuts = () => {
                 className="w-[250px] justify-between"
               >
                 <span className="truncate">
-                  {searchParams.regions.length > 0
-                    ? searchParams.regions
-                        .map((id) => {
-                          const region = searchResult.content.regions.find(
-                            (region) => region.id === id
-                          )
-                          return region ? region.name : ''
-                        })
-                        .join(', ')
-                    : 'Select Region...'}
+                  {selectedRegionsText}
                 </span>
                 <ChevronsUpDown className="opacity-50" />
               </Button>
@@ -135,21 +167,7 @@ const BrowseHuts = () => {
                 <DropdownMenuCheckboxItem
                   key={`region-${index}`}
                   checked={searchParams.regions.includes(region.id)}
-                  onCheckedChange={(checked) => {
-                    if (checked) {
-                      setSearchParams((prevState) => ({
-                        ...prevState,
-                        regions: [...prevState.regions, region.id],
-                      }))
-                    } else {
-                      setSearchParams((prevState) => ({
-                        ...prevState,
-                        regions: prevState.regions.filter(
-                          (id) => id !== region.id
-                        ),
-                      }))
-                    }
-                  }}
+                  onCheckedChange={(checked) => handleRegionToggle(region.id, checked)}
                 >
                   {region.name}
                 </DropdownMenuCheckboxItem>
@@ -164,11 +182,7 @@ const BrowseHuts = () => {
                 className="w-[250px] justify-between"
               >
                 <span className="truncate">
-                  {searchParams.categories.length > 0
-                    ? searchParams.categories
-                        .map((id) => getHutCategory(id))
-                        .join(', ')
-                    : 'Select Categories...'}
+                  {selectedCategoriesText}
                 </span>
                 <ChevronsUpDown className="opacity-50" />
               </Button>
@@ -184,21 +198,7 @@ const BrowseHuts = () => {
                 <DropdownMenuCheckboxItem
                   key={`category-${index}`}
                   checked={searchParams.categories.includes(category.id)}
-                  onCheckedChange={(checked) => {
-                    if (checked) {
-                      setSearchParams((prevState) => ({
-                        ...prevState,
-                        categories: [...prevState.categories, category.id],
-                      }))
-                    } else {
-                      setSearchParams((prevState) => ({
-                        ...prevState,
-                        categories: prevState.categories.filter(
-                          (id) => id !== category.id
-                        ),
-                      }))
-                    }
-                  }}
+                  onCheckedChange={(checked) => handleCategoryToggle(category.id, checked)}
                 >
                   {category.name}
                 </DropdownMenuCheckboxItem>

@@ -7,7 +7,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb.tsx'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { getHutCategory, SearchState } from '@/types/Constants.ts'
 import { getHutById } from '@/services/Huts.ts'
 import { LoadingSpinner } from '@/components/common/LoadingSpinner.tsx'
@@ -49,12 +49,17 @@ const HutDetails = () => {
     },
     state: SearchState.LOADING,
   })
-  const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null)
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const [drawerState, setDrawerState] = useState({
+    isOpen: false,
+    selectedAlert: null as Alert | null
+  });
 
   const handleAlertClick = (alert: Alert) => {
-    setSelectedAlert(alert)
-    setIsDrawerOpen(true)
+    setDrawerState({
+      isOpen: true,
+      selectedAlert: alert
+    });
+
   }
 
   useEffect(() => {
@@ -63,26 +68,31 @@ const HutDetails = () => {
         ...prevState,
         state: SearchState.LOADING,
       }))
-      getHutById(parseInt(id!, 10)).then(
-        (response) => {
-          setSearchResult({ content: response, state: SearchState.SUCCESS })
-        },
+      try {
+        const response = await getHutById(parseInt(id!, 10));
+        setSearchResult({ content: response, state: SearchState.SUCCESS });
+        document.title = response.name;
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        (_error) => {
-          setSearchResult((prevState) => ({
-            ...prevState,
-            state: SearchState.ERROR,
-          }))
-        }
-      )
+      } catch (error) {
+        setSearchResult(prev => ({
+          ...prev,
+          state: SearchState.ERROR
+        }));
+      }
+
     }
-    fetchHut()
-    document.title = searchResult.content.name
+    if (id) {
+      fetchHut()
+    }
   }, [id])
 
-  const locationText = (...locations: string[]): string => {
-    return locations.join(', ')
-  }
+  const locationText = useMemo(() => {
+    if (!searchResult.content) return ''
+    return [searchResult.content.location, searchResult.content.region]
+      .filter(Boolean)
+      .join(', ');
+  }, [searchResult.content]);
+
 
   const headerContent = () => {
     if (searchResult.state === SearchState.SUCCESS) {
@@ -130,10 +140,7 @@ const HutDetails = () => {
                 </Badge>
               </div>
               <p className="leading-7 opacity-70 italic">
-                {locationText(
-                  searchResult.content.location,
-                  searchResult.content.region
-                )}
+                {locationText}
               </p>
               <h4 className="scroll-m-20 text-l font-semibold tracking-tight">
                 {searchResult.content.description}
@@ -223,9 +230,9 @@ const HutDetails = () => {
       <header className="w-full flex flex-col pb-2">{headerContent()}</header>
       {content()}
       <AlertDrawer
-        alert={selectedAlert}
-        isOpen={isDrawerOpen}
-        onClose={() => setIsDrawerOpen(false)}
+        alert={drawerState.selectedAlert}
+        isOpen={drawerState.isOpen}
+        onClose={() => setDrawerState(prev => ({...prev, isOpen: false}))}
       />
     </div>
   )

@@ -12,6 +12,7 @@ import (
 	"log"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // GetHutById Gets hut by id.
@@ -78,24 +79,38 @@ func createSearchResult(result []model.Hut) *model.HutSearchResult {
 }
 
 func addHutDetails(hut *model.Hut) *model.Hut {
-	res, err := external.GetHutDetails(hut.ExternalId)
-	if err != nil {
-		log.Printf("failed to get hut details: %v", err)
-		return hut
+	start := time.Now()
+	detailsChannel := make(chan *external.ApiHut)
+	alertsChannel := make(chan []external.ApiAlert)
+	go func() {
+		res, err := external.GetHutDetails(hut.ExternalId)
+		if err != nil {
+			log.Printf("failed to get hut details: %v", err)
+			detailsChannel <- nil
+			return
+		}
+		detailsChannel <- &res
+	}()
+	go func() {
+		res, err := external.GetRegionalAlerts(hut.RegionId)
+		if err != nil {
+			log.Printf("failed to get alerts: %v", err)
+			alertsChannel <- []external.ApiAlert{}
+			return
+		}
+		alertsChannel <- res
+	}()
+	end := time.Since(start)
+	if details := <-detailsChannel; details != nil {
+		hut.Facilities = details.Facilities
+		hut.Description = details.Description
+		hut.NumberOfBunks = details.NumberOfBunks
+		hut.Status = details.Status
 	}
-	hut.Facilities = res.Facilities
-	hut.Description = res.Description
-	hut.NumberOfBunks = res.NumberOfBunks
-	hut.Status = res.Status
-	return addHutAlerts(hut)
-}
+	if alerts := <-alertsChannel; alerts != nil {
+		hut.Alerts = alerts
+	}
+	fmt.Printf("external api call took %v\n", end)
 
-func addHutAlerts(hut *model.Hut) *model.Hut {
-	res, err := external.GetRegionalAlerts(hut.RegionId)
-	if err != nil {
-		log.Printf("failed to get alerts: %v", err)
-		return hut
-	}
-	hut.Alerts = res
 	return hut
 }

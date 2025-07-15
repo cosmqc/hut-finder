@@ -10,7 +10,7 @@ import (
 	"log"
 )
 
-// Gets session token then validates.
+// GetSession Gets session token then validates.
 // Returns nil if the token is valid, otherwise some form
 // of error is returned.
 func GetSession(tokenString string) error {
@@ -28,7 +28,7 @@ func GetSession(tokenString string) error {
 	return nil
 }
 
-// Creates a new session. A `session` is a JWT token, which is used to
+// CreateSession Creates a new session. A `session` is a JWT token, which is used to
 // access certain protected endpoints.
 func CreateSession(username string, password string) (string, error) {
 	tokenString, err := util.CreateToken(username)
@@ -49,7 +49,7 @@ func CreateSession(username string, password string) (string, error) {
 	return result, nil
 }
 
-// Deletes the given session. Returns nil if successfully deleted,
+// DeleteSession Deletes the given session. Returns nil if successfully deleted,
 // otherwise an error of some sort is returned.
 func DeleteSession(tokenString string) error {
 	user, _, err := util.Parse(tokenString)

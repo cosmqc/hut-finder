@@ -112,6 +112,7 @@ func GetAllHuts(query string, categories []int, sortMethod string, regions []str
 	return huts, nil
 }
 
+// GetHutRegions retrieves a distinct list of hut regions from the database.
 func GetHutRegions() ([]model.Region, error) {
 	rows, err := db.GetDatabase().Query(context.Background(),
 		"SELECT DISTINCT region_id, region FROM hut")

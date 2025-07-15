@@ -15,7 +15,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// Gets user by id. Note that sensitive values are omitted from the returning struct!
+// GetUserById Gets user by id. Note that sensitive values are omitted from the returning struct!
 func GetUserById(id uint64) (*model.User, error) {
 	log.Printf("querying for username with id: `%d`", id)
 	sql := `
@@ -38,7 +38,7 @@ func GetUserById(id uint64) (*model.User, error) {
 	return &result, nil
 }
 
-// Gets user by username. Sensitive values are also omitted here.
+// GetUserByUsername Gets user by username. Sensitive values are also omitted here.
 func GetUserByUsername(username string) (*model.User, error) {
 	log.Printf("querying for user with username: `%s`", username)
 	sql := `
@@ -61,7 +61,7 @@ func GetUserByUsername(username string) (*model.User, error) {
 	return &result, nil
 }
 
-// Gets user by both username and password.
+// GetUserByUsernameAndPassword Gets user by both username and password.
 // Note that we map the whole struct here, i.e. nothing is omitted,
 // since we're already checking against the provided password..
 // However, this is never returned to the user anyway.
@@ -89,7 +89,7 @@ func GetUserByUsernameAndPassword(username string, password string) (*model.User
 	return &result, nil
 }
 
-// Creates the user, and returns the created user, with sensitive info omitted.
+// CreateUser Creates the user, and returns the created user, with sensitive info omitted.
 func CreateUser(user model.User) (*model.User, error) {
 	sql := `
 	INSERT INTO hut_user (username, first_name, last_name, email, password) 

@@ -11,7 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Handler function for the `/public/ping` endpoint.
+// Ping Handler function for the `/public/ping` endpoint.
 // Really only used for test purposes.
 func Ping(c *gin.Context) {
 	var ping model.Ping

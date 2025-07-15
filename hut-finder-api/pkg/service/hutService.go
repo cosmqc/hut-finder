@@ -12,7 +12,6 @@ import (
 	"log"
 	"strconv"
 	"strings"
-	"time"
 )
 
 // GetHutById Gets hut by id.
@@ -52,6 +51,8 @@ func GetAllHuts(query string, categories []int, sortMethod string, regions []str
 	return createSearchResult(huts), nil
 }
 
+// createSearchResult generates a HutSearchResult object containing huts, categories, and regions.
+// It retrieves hut categories and regions, defaulting to empty regions in case of retrieval failure.
 func createSearchResult(result []model.Hut) *model.HutSearchResult {
 	categories := make([]model.HutCategoryDto, 0, model.BASIC+1)
 
@@ -78,8 +79,8 @@ func createSearchResult(result []model.Hut) *model.HutSearchResult {
 	}
 }
 
+// addHutDetails Concurrently fetches additional details and alerts fetched from external APIs.
 func addHutDetails(hut *model.Hut) *model.Hut {
-	start := time.Now()
 	detailsChannel := make(chan *external.ApiHut)
 	alertsChannel := make(chan []external.ApiAlert)
 	go func() {
@@ -100,7 +101,6 @@ func addHutDetails(hut *model.Hut) *model.Hut {
 		}
 		alertsChannel <- res
 	}()
-	end := time.Since(start)
 	if details := <-detailsChannel; details != nil {
 		hut.Facilities = details.Facilities
 		hut.Description = details.Description
@@ -110,7 +110,5 @@ func addHutDetails(hut *model.Hut) *model.Hut {
 	if alerts := <-alertsChannel; alerts != nil {
 		hut.Alerts = alerts
 	}
-	fmt.Printf("external api call took %v\n", end)
-
 	return hut
 }

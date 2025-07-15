@@ -18,8 +18,6 @@ export const getHutById = async (id: number): Promise<Hut> => {
 }
 
 export const getHutByGlobalId = async (globalId: string): Promise<Hut> => {
-  const response = await axiosInstance.get<Hut>(
-    `/huts/global/${globalId}`
-  )
+  const response = await axiosInstance.get<Hut>(`/huts/global/${globalId}`)
   return response.data
 }

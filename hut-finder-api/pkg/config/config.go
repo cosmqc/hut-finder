@@ -56,10 +56,12 @@ func GetTokenExpiryHours() int64 {
 	return hours
 }
 
+// GetExternalApiBaseUrl retrieves the base URL for an external API from environment variables.
 func GetExternalApiBaseUrl() string {
 	return os.Getenv("EXTERNAL_API_BASE_URL")
 }
 
+// GetExternalApiKey retrieves the API key for an external service from environment variables.
 func GetExternalApiKey() string {
 	return os.Getenv("EXTERNAL_API_KEY")
 }

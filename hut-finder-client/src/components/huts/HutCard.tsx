@@ -21,6 +21,7 @@ const HutCard = (props: { hut: Hut }) => {
         <AspectRatio ratio={3 / 2} className="rounded-lg">
           {HutImage(props.hut)}
         </AspectRatio>
+        <div className="flex-grow min-h-1" />
         <CardTitle>{props.hut.name}</CardTitle>
         <CardDescription className="text-xs">
           {props.hut.location}

@@ -12,7 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Creates and returns the server with additional configurations.
+// CreateServer Creates and returns the server with additional configurations.
 func CreateServer() *gin.Engine {
 	r := gin.New()
 	r.Use(gin.Logger())

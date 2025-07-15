@@ -12,23 +12,23 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-type postgres struct {
+type Postgres struct {
 	db *pgxpool.Pool
 }
 
 var (
-	pgInstance *postgres
+	pgInstance *Postgres
 	pgOnce     sync.Once
 )
 
 // NewPostgresConnection Creates a new postgres connection pool.
-func NewPostgresConnection(ctx context.Context) (*postgres, error) {
+func NewPostgresConnection(ctx context.Context) (*Postgres, error) {
 	connStr := config.GetDbUrl()
 	var db *pgxpool.Pool
 	var err error
 	pgOnce.Do(func() {
 		db, err = pgxpool.New(ctx, connStr)
-		pgInstance = &postgres{db}
+		pgInstance = &Postgres{db}
 	})
 	if err != nil {
 		return nil, err
@@ -37,7 +37,7 @@ func NewPostgresConnection(ctx context.Context) (*postgres, error) {
 }
 
 // Close Closes the DB connection.
-func (pg *postgres) Close() {
+func (pg *Postgres) Close() {
 	pg.db.Close()
 }
 

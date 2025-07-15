@@ -51,15 +51,14 @@ const HutDetails = () => {
   })
   const [drawerState, setDrawerState] = useState({
     isOpen: false,
-    selectedAlert: null as Alert | null
-  });
+    selectedAlert: null as Alert | null,
+  })
 
   const handleAlertClick = (alert: Alert) => {
     setDrawerState({
       isOpen: true,
-      selectedAlert: alert
-    });
-
+      selectedAlert: alert,
+    })
   }
 
   useEffect(() => {
@@ -69,17 +68,16 @@ const HutDetails = () => {
         state: SearchState.LOADING,
       }))
       try {
-        const response = await getHutById(parseInt(id!, 10));
-        setSearchResult({ content: response, state: SearchState.SUCCESS });
-        document.title = response.name;
+        const response = await getHutById(parseInt(id!, 10))
+        setSearchResult({ content: response, state: SearchState.SUCCESS })
+        document.title = response.name
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
-        setSearchResult(prev => ({
+        setSearchResult((prev) => ({
           ...prev,
-          state: SearchState.ERROR
-        }));
+          state: SearchState.ERROR,
+        }))
       }
-
     }
     if (id) {
       fetchHut()
@@ -90,9 +88,8 @@ const HutDetails = () => {
     if (!searchResult.content) return ''
     return [searchResult.content.location, searchResult.content.region]
       .filter(Boolean)
-      .join(', ');
-  }, [searchResult.content]);
-
+      .join(', ')
+  }, [searchResult.content])
 
   const headerContent = () => {
     if (searchResult.state === SearchState.SUCCESS) {
@@ -139,9 +136,7 @@ const HutDetails = () => {
                   {getHutCategory(searchResult.content.category)}
                 </Badge>
               </div>
-              <p className="leading-7 opacity-70 italic">
-                {locationText}
-              </p>
+              <p className="leading-7 opacity-70 italic">{locationText}</p>
               <h4 className="scroll-m-20 text-l font-semibold tracking-tight">
                 {searchResult.content.description}
               </h4>
@@ -166,10 +161,13 @@ const HutDetails = () => {
                   <TabsContent value="details">
                     <Card className="h-[360px]">
                       <CardContent className="flex flex-col gap-2">
-                        <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
-                          Facilities
+                        <h4 className="scroll-m-20 font-semibold tracking-tight">
+                          {searchResult.content.facilities !== null &&
+                          searchResult.content.facilities.length > 0
+                            ? 'Facilities'
+                            : 'Failed to load facilities for this hut.'}
                         </h4>
-                        {searchResult.content.facilities.map(
+                        {(searchResult.content.facilities ?? []).map(
                           (facility: string, index: number) => (
                             <p key={`facility-${index}`} className="leading-7">
                               {facility}
@@ -182,7 +180,8 @@ const HutDetails = () => {
                   <TabsContent value="alerts">
                     <Card className="h-[360px]">
                       <CardContent className="flex flex-col gap-2 overflow-y-scroll">
-                        {searchResult.content.alerts ? (
+                        {searchResult.content.alerts !== null &&
+                        searchResult.content.alerts.length > 0 ? (
                           searchResult.content.alerts?.map((alert: Alert) => (
                             <div
                               key={alert.id}
@@ -232,7 +231,7 @@ const HutDetails = () => {
       <AlertDrawer
         alert={drawerState.selectedAlert}
         isOpen={drawerState.isOpen}
-        onClose={() => setDrawerState(prev => ({...prev, isOpen: false}))}
+        onClose={() => setDrawerState((prev) => ({ ...prev, isOpen: false }))}
       />
     </div>
   )

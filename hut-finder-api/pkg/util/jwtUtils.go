@@ -15,6 +15,7 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
+// Parse validates and decodes a JWT token string, returning the associated user, token object, or an error if invalid.
 func Parse(tokenString string) (*model.User, *jwt.Token, error) {
 	var userRef *model.User = nil
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {

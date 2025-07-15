@@ -36,6 +36,7 @@ func buildRegionalAlertsURL(id string) string {
 	return baseUrl + fmt.Sprintf(alertsPath, id)
 }
 
+// GetHutDetails fetches the detailed information of a hut by its unique ID from an external API.
 func GetHutDetails(id uint32) (ApiHut, error) {
 	url := buildHutDetailsURL(id)
 
@@ -60,6 +61,8 @@ func GetHutDetails(id uint32) (ApiHut, error) {
 	return decodeHutResponse(response.Body)
 }
 
+// GetRegionalAlerts fetches alerts for a specific region based on the provided region ID.
+// It returns a slice of ApiAlert and an error if the request or decoding fails.
 func GetRegionalAlerts(id string) ([]ApiAlert, error) {
 	url := buildRegionalAlertsURL(id)
 

@@ -8,7 +8,7 @@ import (
 	"fmt"
 )
 
-// Implements base error interface so that we can treat these differently,
+// ValidationError Implements base error interface so that we can treat these differently,
 // i.e. return 400s for validation.
 type ValidationError struct {
 	Message string

@@ -7,26 +7,22 @@ Contains:
 - `hut-finder-client`, a client side webpage that displays hut data;
 - `hut-finder-utilities`, which has utilities to get `hut-finder` running.
 
-Instructions for each component are in the individual READMEs, Quickstart for API/DB (from root dir):
-
-```bash
-docker compose up --build
-```
+Instructions for each component are in the individual READMEs.
 
 Setting up environment:
 ```bash
 # .env
 
-# The username of the user postgres creates
-POSTGRES_USER=example
-# The password of the user postgres creates
-POSTGRES_PASSWORD=example
-# The postgres database name. Cannot include hyphens (postgres commits oof)
+# The username of the postgres root user
+POSTGRES_USER=postgres
+# The password of the POSTGRES_USER
+POSTGRES_PASSWORD=postgres
+# The postgres database name. Cannot include hyphens
 POSTGRES_DB=example
 ```
 
 ```bash
-# hut-finder-api/.env - `PORT` and `TOKEN_EXPIRY_HOURS` can be left empty
+# hut-finder-api/.env - `PORT`, `TOKEN_EXPIRY_HOURS`, and EXTERNAL_API_KEY can be left empty
 
 # The port the API listens on, serves as a backup if the root .env isn't set
 PORT=1337
@@ -36,6 +32,8 @@ SIGNING_KEY=example
 TOKEN_EXPIRY_HOURS=12
 # The database URL
 DB_URL=postgresql://localhost:5432/...
+EXTERNAL_API_BASE_URL=https://api.doc.govt.nz/v2/
+EXTERNAL_API_KEY=key
 ```
 
 ## Authors 

@@ -1,48 +1,32 @@
-import {Grid} from '@mui/joy';
-import HutCard from './HutCard.tsx';
+import HutCard from '@/components/huts/HutCard.tsx'
+import { pluraliseWord } from '@/components/common/Util.ts'
 
-interface HutListProps {
-  huts: Hut[];
+const HutList = (props: { huts: Hut[] }) => {
+  if (props.huts) {
+    return (
+      <div className="flex flex-col">
+        <header className="pb-3">
+          <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
+            {props.huts.length > 0
+              ? pluraliseWord(props.huts.length, 'result')
+              : '0 results'}
+          </h4>
+        </header>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full h-full">
+          {props.huts.map((hut) => (
+            <HutCard hut={hut} key={hut.id} />
+          ))}
+        </div>
+      </div>
+    )
+  }
+  return (
+    <div className="h-full w-full flex justify-center items-center">
+      <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
+        No results found.
+      </h4>
+    </div>
+  )
 }
 
-const HutList = (props: HutListProps) => {
-  return (
-    <Grid
-      container
-      rowSpacing={2}
-      columnSpacing={2}
-      sx={{
-        width: '100%',
-        justifyContent: 'stretch',
-        paddingX: '10px',
-      }}
-    >
-      {props.huts.map((hut: Hut) => (
-        <Grid
-          key={hut.id}
-          xs={12}
-          sm={6}
-          md={4}
-          lg={3}
-          xl={3}
-          display='flex'
-        >
-          <HutCard
-            hut={hut}
-            variant='outlined'
-            color='primary'
-            sx={{
-              flexGrow: 1,
-              width: '100%',
-              '&:hover': {
-                boxShadow: 'md',
-                borderColor: 'neutral.outlinedHoverBorder'
-              },
-            }}/>
-        </Grid>
-      ))}
-    </Grid>
-  );
-};
-
-export default HutList;
+export default HutList

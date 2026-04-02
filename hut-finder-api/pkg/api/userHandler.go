@@ -15,7 +15,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Handler function for `/protected/users/:id`.
+// GetUserById Handler function for `/protected/users/:id`.
 // Gets the user and returns it in the response body if the user exists.
 func GetUserById(c *gin.Context) {
 	user, err := service.GetUserById(c.Param("id"))
@@ -27,7 +27,7 @@ func GetUserById(c *gin.Context) {
 	c.JSON(http.StatusOK, *user)
 }
 
-// Handler function for `/public/users/create`.
+// CreateUser Handler function for `/public/users/create`.
 // Creates user and returns in response body if valid.
 func CreateUser(c *gin.Context) {
 	var request model.User

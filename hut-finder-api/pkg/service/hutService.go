@@ -6,6 +6,7 @@ package service
 
 import (
 	"fmt"
+	"hut-finder-api/pkg/external"
 	"hut-finder-api/pkg/model"
 	"hut-finder-api/pkg/repository"
 	"log"
@@ -26,7 +27,7 @@ func GetHutById(id string) (*model.Hut, error) {
 		log.Printf("repository threw error: %v", err)
 		return nil, fmt.Errorf("repository threw error: %w", err)
 	}
-	return hut, nil
+	return addHutDetails(hut), nil
 }
 
 // GetHutByGlobalId Gets hut by global id.
@@ -36,12 +37,12 @@ func GetHutByGlobalId(globalId string) (*model.Hut, error) {
 		log.Printf("repository threw error: %v", err)
 		return nil, fmt.Errorf("repository threw error: %w", err)
 	}
-	return hut, nil
+	return addHutDetails(hut), nil
 }
 
 // GetAllHuts Gets all huts.
-func GetAllHuts(query string, categories []int, sortMethod string) (*model.HutSearchResult, error) {
-	huts, err := repository.GetAllHuts(query, categories, sortMethod)
+func GetAllHuts(query string, categories []int, sortMethod string, regions []string) (*model.HutSearchResult, error) {
+	huts, err := repository.GetAllHuts(query, categories, sortMethod, regions)
 	if err != nil {
 		log.Printf("repository threw error: %v", err)
 		return nil, fmt.Errorf("repository threw error: %w", err)
@@ -50,6 +51,8 @@ func GetAllHuts(query string, categories []int, sortMethod string) (*model.HutSe
 	return createSearchResult(huts), nil
 }
 
+// createSearchResult generates a HutSearchResult object containing huts, categories, and regions.
+// It retrieves hut categories and regions, defaulting to empty regions in case of retrieval failure.
 func createSearchResult(result []model.Hut) *model.HutSearchResult {
 	categories := make([]model.HutCategoryDto, 0, model.BASIC+1)
 
@@ -59,8 +62,53 @@ func createSearchResult(result []model.Hut) *model.HutSearchResult {
 			Name:        i.String(),
 		})
 	}
+
+	regions, err := repository.GetHutRegions()
+	if err != nil {
+		log.Printf("failed to get hut regions: %v", err)
+		return &model.HutSearchResult{
+			Results:    result,
+			Categories: categories,
+			Regions:    []model.Region{},
+		}
+	}
 	return &model.HutSearchResult{
 		Results:    result,
 		Categories: categories,
+		Regions:    regions,
 	}
+}
+
+// addHutDetails Concurrently fetches additional details and alerts fetched from external APIs.
+func addHutDetails(hut *model.Hut) *model.Hut {
+	detailsChannel := make(chan *external.ApiHut)
+	alertsChannel := make(chan []external.ApiAlert)
+	go func() {
+		res, err := external.GetHutDetails(hut.ExternalId)
+		if err != nil {
+			log.Printf("failed to get hut details: %v", err)
+			detailsChannel <- nil
+			return
+		}
+		detailsChannel <- &res
+	}()
+	go func() {
+		res, err := external.GetRegionalAlerts(hut.RegionId)
+		if err != nil {
+			log.Printf("failed to get alerts: %v", err)
+			alertsChannel <- []external.ApiAlert{}
+			return
+		}
+		alertsChannel <- res
+	}()
+	if details := <-detailsChannel; details != nil {
+		hut.Facilities = details.Facilities
+		hut.Description = details.Description
+		hut.NumberOfBunks = details.NumberOfBunks
+		hut.Status = details.Status
+	}
+	if alerts := <-alertsChannel; alerts != nil {
+		hut.Alerts = alerts
+	}
+	return hut
 }

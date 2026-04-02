@@ -31,7 +31,6 @@ func GetHutById(id uint64) (*model.Hut, error) {
 		return nil, fmt.Errorf("could not collect row: %w", err)
 	}
 
-	model.PopulateFacilities(&hut)
 	return &hut, nil
 }
 
@@ -50,16 +49,15 @@ func GetHutByGlobalId(globalId string) (*model.Hut, error) {
 		log.Printf("could not collect row: %v", err)
 		return nil, fmt.Errorf("could not collect row: %w", err)
 	}
-	model.PopulateFacilities(&hut)
 	return &hut, nil
 }
 
 // GetAllHuts Gets all huts.
-func GetAllHuts(query string, categories []int, sortMethod string) ([]model.Hut, error) {
+func GetAllHuts(query string, categories []int, sortMethod string, regions []string) ([]model.Hut, error) {
 	log.Printf("querying for all huts")
 	var sql string
 	var args []interface{}
-
+	var argIndex = 2
 	args = append(args, "%"+query+"%")
 
 	if len(categories) == 0 {
@@ -68,11 +66,22 @@ func GetAllHuts(query string, categories []int, sortMethod string) ([]model.Hut,
 		sql = "SELECT * FROM hut WHERE name ILIKE $1 AND category IN ("
 		var placeholders []string
 
-		for i, category := range categories {
-			placeholders = append(placeholders, fmt.Sprintf("$%d", i+2))
+		for _, category := range categories {
+			placeholders = append(placeholders, fmt.Sprintf("$%d", argIndex))
 			args = append(args, category)
+			argIndex++
 		}
 
+		sql += strings.Join(placeholders, ", ") + ") "
+	}
+	if len(regions) > 0 {
+		sql += "AND region_id IN ("
+		var placeholders []string
+		for _, region := range regions {
+			placeholders = append(placeholders, fmt.Sprintf("$%d", argIndex))
+			args = append(args, region)
+			argIndex++
+		}
 		sql += strings.Join(placeholders, ", ") + ") "
 	}
 	switch sortMethod {
@@ -100,11 +109,20 @@ func GetAllHuts(query string, categories []int, sortMethod string) ([]model.Hut,
 		return nil, err
 	}
 
-	var result []model.Hut
-	for _, hut := range huts {
-		model.PopulateFacilities(&hut)
-		result = append(result, hut)
-	}
+	return huts, nil
+}
 
-	return result, nil
+// GetHutRegions retrieves a distinct list of hut regions from the database.
+func GetHutRegions() ([]model.Region, error) {
+	rows, err := db.GetDatabase().Query(context.Background(),
+		"SELECT DISTINCT region_id, region FROM hut")
+	if err != nil {
+		log.Printf("could not query database: %v", err)
+	}
+	defer rows.Close()
+	regions, err := pgx.CollectRows(rows, pgx.RowToStructByName[model.Region])
+	if err != nil {
+		log.Printf("could not collect rows: %v", err)
+	}
+	return regions, nil
 }

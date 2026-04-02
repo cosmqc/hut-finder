@@ -1,11 +1,11 @@
 type User = {
-  id: number;
-  username: string;
-  firstName: string;
-  lastName: string;
+  id: number
+  username: string
+  firstName: string
+  lastName: string
 }
 
 type UserRegister = {
-  email: string;
-  password: string;
+  email: string
+  password: string
 } & User

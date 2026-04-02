@@ -1,20 +1,39 @@
-// Method from MUI documentation for generating colours from a provided string.
-// Have tweaked it a tiny bit to mute some of the colours.
-export const stringToColour = (string: string, muteFactor: number = 0.5): string => {
-  let hash = 0;
-  let i;
+import DOMPurify from 'dompurify'
 
-  for (i = 0; i < string.length; i += 1) {
-    hash = string.charCodeAt(i) + ((hash << 5) - hash);
+export const sanitiseHtml = (dirty: string) => {
+  return DOMPurify.sanitize(dirty, {
+    ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br'],
+    ALLOWED_ATTR: ['href', 'target', 'class'],
+    ALLOW_DATA_ATTR: false,
+    USE_PROFILES: { html: true },
+  })
+}
+
+export const pluraliseWord = (
+  count: number,
+  word: string,
+  returnWordOnly: boolean = false
+): string => {
+  const str = `${word}${count > 1 ? 's' : ''}`
+  if (returnWordOnly) {
+    return str
   }
+  return `${count} ${str}`
+}
 
-  let color = '#';
+export const debounce = <T extends (...args: any[]) => any>(
+  func: T,
+  wait: number
+) => {
+  let timeout: ReturnType<typeof setTimeout>
 
-  for (i = 0; i < 3; i += 1) {
-    const value = (hash >> (i * 8)) & 0xff;
-    const mutedValue = Math.round(value * muteFactor);
-    color += `00${mutedValue.toString(16)}`.slice(-2);
+  return (...args: Parameters<T>): void => {
+    const later = () => {
+      clearTimeout(timeout)
+      func(...args)
+    }
+
+    clearTimeout(timeout)
+    timeout = setTimeout(later, wait)
   }
-
-  return color;
 }

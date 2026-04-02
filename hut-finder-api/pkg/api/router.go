@@ -12,7 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Creates and returns the server with additional configurations.
+// CreateServer Creates and returns the server with additional configurations.
 func CreateServer() *gin.Engine {
 	r := gin.New()
 	r.Use(gin.Logger())
@@ -25,7 +25,7 @@ func CreateServer() *gin.Engine {
 
 // Registers routes that don't require authentication.
 func registerUnauthorisedRoutes(r *gin.Engine) {
-	public := r.Group("/public")
+	public := r.Group("/api")
 	{
 		public.POST("/ping", Ping)
 		public.GET("/huts/:id", GetHutById)
@@ -38,7 +38,7 @@ func registerUnauthorisedRoutes(r *gin.Engine) {
 
 // Registers routes that require authentication.
 func registerAuthorisedRoutes(r *gin.Engine) {
-	protected := r.Group("/protected")
+	protected := r.Group("/api")
 	protected.Use(middleware.JwtMiddleware())
 	{
 		protected.GET("/users/:id", GetUserById)
@@ -48,7 +48,7 @@ func registerAuthorisedRoutes(r *gin.Engine) {
 
 func configureCors(r *gin.Engine) {
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:5173"},
+		AllowOrigins:     []string{"http://localhost:5173"}, // Add more origins here later on
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},

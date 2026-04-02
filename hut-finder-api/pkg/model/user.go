@@ -19,7 +19,7 @@ type User struct {
 	Password  string `json:"password,omitempty" db:"password" binding:"required"`
 }
 
-// Validation methods
+// Validate Validation methods
 func (u *User) Validate() error {
 	if !validateEmail(u.Email) {
 		return &ValidationError{Message: "invalid email format"}

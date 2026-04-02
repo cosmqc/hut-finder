@@ -12,7 +12,7 @@ import (
 	"strconv"
 )
 
-// Gets user by id.
+// GetUserById Gets user by id.
 func GetUserById(id string) (*model.User, error) {
 	i, err := strconv.ParseUint(id, 10, 32)
 	if err != nil {
@@ -28,7 +28,7 @@ func GetUserById(id string) (*model.User, error) {
 	return user, nil
 }
 
-// Creates a new user.
+// CreateUser Creates a new user.
 func CreateUser(user model.User) (*model.User, error) {
 	if err := user.Validate(); err != nil {
 		log.Printf("failed to validate user: %v", err)

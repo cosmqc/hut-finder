@@ -12,23 +12,23 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-type postgres struct {
+type Postgres struct {
 	db *pgxpool.Pool
 }
 
 var (
-	pgInstance *postgres
+	pgInstance *Postgres
 	pgOnce     sync.Once
 )
 
-// Creates a new postgres connection pool.
-func NewPostgresConnection(ctx context.Context) (*postgres, error) {
+// NewPostgresConnection Creates a new postgres connection pool.
+func NewPostgresConnection(ctx context.Context) (*Postgres, error) {
 	connStr := config.GetDbUrl()
 	var db *pgxpool.Pool
 	var err error
 	pgOnce.Do(func() {
 		db, err = pgxpool.New(ctx, connStr)
-		pgInstance = &postgres{db}
+		pgInstance = &Postgres{db}
 	})
 	if err != nil {
 		return nil, err
@@ -36,12 +36,12 @@ func NewPostgresConnection(ctx context.Context) (*postgres, error) {
 	return pgInstance, nil
 }
 
-// Closes the DB connection.
-func (pg *postgres) Close() {
+// Close Closes the DB connection.
+func (pg *Postgres) Close() {
 	pg.db.Close()
 }
 
-// Returns singleton database instance. Whenever repository calls are needed, import this module
+// GetDatabase Returns singleton database instance. Whenever repository calls are needed, import this module
 // and invoke this function!
 func GetDatabase() *pgxpool.Pool {
 	return pgInstance.db

@@ -120,6 +120,7 @@ func initialiseHutData() error {
 			"Lat":        lat,
 			"Lon":        lon,
 			"Bookable":   hut.Bookable,
+			"ExternalId": hut.ExternalId,
 		}
 		batch.Queue(query, args)
 	}
